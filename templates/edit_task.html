@@ -11,7 +11,7 @@
 
     <div class="mb-3">
         <label for="description" class="form-label">Descrição:</label>
-        <textarea class="form-control" id="description" name="description" rows="3">{{ task.description or '' }}</textarea>
+        <textarea class="form-control" id="description" name="description" rows="3">{{ task.description }}</textarea>
     </div>
 
     <div class="mb-3">
@@ -33,7 +33,7 @@
         </datalist>
         <div id="selected-categories-list" class="mt-2 d-flex flex-wrap gap-2"></div>
         <input type="hidden" name="categories" id="hidden-categories-input">
-        <div id="initial-categories-data" data-categories="{{ task.categories | map(attribute='name') | list | tojson }}"></div>
+        <div id="initial-categories-data" data-categories='{{ task.categories|map(attribute="name")|list|tojson }}' style="display:none"></div>
     </div>
 
     <div class="mb-3">
@@ -47,15 +47,25 @@
 
     <div class="mb-3">
         <label for="due_date" class="form-label">Data de Vencimento (Opcional):</label>
-        <input type="date" class="form-control" id="due_date" name="due_date" value="{{ task.due_date | datetimeformat('%Y-%m-%d') if task.due_date else '' }}">
+        <input type="date" class="form-control" id="due_date" name="due_date" value="{{ task.due_date.strftime('%Y-%m-%d') if task.due_date }}">
     </div>
 
+    <!-- Checklist/Subtarefas -->
     <div class="mb-3">
-        <label for="status" class="form-label">Status:</label>
-        <select class="form-select" id="status" name="completed">
-            <option value="0" {% if not task.completed %}selected{% endif %}>Pendente</option>
-            <option value="1" {% if task.completed %}selected{% endif %}>Concluída</option>
-        </select>
+        <label class="form-label">Checklist/Subtarefas:</label>
+        <div id="checklist-container">
+            {% for sub in task.subtasks %}
+                <div class="input-group mb-2 checklist-item">
+                    <input type="text" class="form-control" name="subtask_description[]" value="{{ sub.description }}" required>
+                    <div class="input-group-text">
+                        <input class="form-check-input mt-0" type="checkbox" name="subtask_completed[]" value="{{ loop.index0 }}"
+                            {% if sub.completed %}checked{% endif %}>
+                    </div>
+                    <button type="button" class="btn btn-outline-danger remove-subtask">&times;</button>
+                </div>
+            {% endfor %}
+        </div>
+        <button type="button" id="add-subtask" class="btn btn-outline-secondary btn-sm mt-2">Adicionar Subtarefa</button>
     </div>
 
     <div class="d-grid gap-2">
@@ -68,4 +78,5 @@
 {% block scripts %}
     {{ super() }}
     <script src="{{ url_for('static', filename='category_handler.js') }}"></script>
+    <script src="{{ url_for('static', filename='checklist.js') }}"></script>
 {% endblock %}

@@ -43,6 +43,31 @@
     </div>
 </div>
 
+<!-- GRÁFICO MELHORADO: Tarefas criadas por mês -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-secondary text-white">
+                <h3 class="h5 mb-0">Tarefas criadas por mês</h3>
+            </div>
+            <div class="card-body d-flex justify-content-center align-items-center">
+                <canvas id="tasksPerMonthChart" style="max-height: 250px;"></canvas>
+                <div id="noTasksPerMonthData" style="display:none; color:var(--bs-body-color);">Sem dados suficientes para mostrar o gráfico.</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-secondary text-white">
+                <h3 class="h5 mb-0">Progresso dos Checklists</h3>
+            </div>
+            <div class="card-body d-flex justify-content-center align-items-center">
+                <canvas id="subtasksProgressChart" style="max-height: 250px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row mb-4">
     <div class="col-md-6">
         <div class="card shadow-sm h-100">
@@ -138,11 +163,25 @@
                         ">
                             <td class="{{ 'text-decoration-line-through' if task.completed }}">
                                 {{ task.title }}
+                                {% if task.subtasks %}
+                                    <ul class="list-group mt-2">
+                                    {% for sub in task.subtasks %}
+                                        <li class="list-group-item py-1">
+                                            <form method="post" action="{{ url_for('toggle_subtask', subtask_id=sub.id) }}" style="display:inline;">
+                                                <input type="checkbox" name="completed" onchange="this.form.submit()" {% if sub.completed %}checked{% endif %} />
+                                            </form>
+                                            <span class="{% if sub.completed %}text-decoration-line-through text-success{% endif %}">
+                                                {{ sub.description }}
+                                            </span>
+                                        </li>
+                                    {% endfor %}
+                                    </ul>
+                                {% endif %}
                             </td>
                             <td>
-                                {% if task.priority == 'high' %}
+                                {% if task.priority.value == 'high' %}
                                     <span class="badge text-bg-danger">Alta</span>
-                                {% elif task.priority == 'medium' %}
+                                {% elif task.priority.value == 'medium' %}
                                     <span class="badge text-bg-warning">Média</span>
                                 {% else %}
                                     <span class="badge text-bg-info">Baixa</span>
@@ -213,19 +252,42 @@
     </div>
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+function getThemeColors() {
+    const theme = document.body.getAttribute('data-bs-theme') || 'light';
+    if (theme === 'dark') {
+        return {
+            bg: ['#198754', '#ffc107', '#0dcaf0', '#6c757d', '#dc3545', '#212529'],
+            font: '#fff',
+            grid: '#343a40'
+        };
+    } else {
+        return {
+            bg: ['#28a745', '#ffc107', '#17a2b8', '#adb5bd', '#dc3545', '#f8f9fa'],
+            font: '#212529',
+            grid: '#dee2e6'
+        };
+    }
+}
+
+// Nome dos meses em português curto
+function getMonthNamePTBR(ym) {
+    const [year, month] = ym.split('-');
+    const meses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+    return meses[parseInt(month, 10)-1] + '/' + year.slice(2);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Gráfico de Progresso Geral
     const progressCtx = document.getElementById('progressChart').getContext('2d');
-    new Chart(progressCtx, {
+    const progressChart = new Chart(progressCtx, {
         type: 'pie',
         data: {
             labels: ['Concluídas', 'Pendentes'],
             datasets: [{
                 data: [{{ completed_tasks | default(0) }}, {{ pending_tasks | default(0) }}],
-                backgroundColor: ['#28a745', '#ffc107'],
+                backgroundColor: [getThemeColors().bg[0], getThemeColors().bg[1]],
                 borderColor: ['#ffffff', '#ffffff'],
                 borderWidth: 2
             }]
@@ -234,9 +296,7 @@ document.addEventListener('DOMContentLoaded', function() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    position: 'bottom'
-                },
+                legend: { position: 'bottom', labels: { color: getThemeColors().font } },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
@@ -254,22 +314,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Gráfico de Prioridade
     const priorityCtx = document.getElementById('priorityChart').getContext('2d');
-    new Chart(priorityCtx, {
+    const priorityChart = new Chart(priorityCtx, {
         type: 'bar',
         data: {
-            labels: {{ priority_labels | tojson }}, // Dados do Python
+            labels: {{ priority_labels | tojson }},
             datasets: [{
                 label: 'Número de Tarefas',
-                data: {{ priority_data | tojson }}, // Dados do Python
+                data: {{ priority_data | tojson }},
                 backgroundColor: [
-                    'rgba(220, 53, 69, 0.7)', // Danger (High)
-                    'rgba(255, 193, 7, 0.7)',  // Warning (Medium)
-                    'rgba(23, 162, 184, 0.7)'  // Info (Low)
+                    getThemeColors().bg[0],
+                    getThemeColors().bg[1],
+                    getThemeColors().bg[2]
                 ],
                 borderColor: [
-                    'rgba(220, 53, 69, 1)',
-                    'rgba(255, 193, 7, 1)',
-                    'rgba(23, 162, 184, 1)'
+                    getThemeColors().bg[0],
+                    getThemeColors().bg[1],
+                    getThemeColors().bg[2]
                 ],
                 borderWidth: 1
             }]
@@ -278,20 +338,18 @@ document.addEventListener('DOMContentLoaded', function() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    display: false // Não precisa de legenda para uma única barra
-                },
-                title: {
-                    display: true,
-                    text: 'Tarefas por Prioridade'
-                }
+                legend: { display: false, labels: { color: getThemeColors().font } },
+                title: { display: true, text: 'Tarefas por Prioridade', color: getThemeColors().font }
             },
             scales: {
                 y: {
                     beginAtZero: true,
-                    ticks: {
-                        precision: 0 // Garante que os ticks sejam números inteiros
-                    }
+                    ticks: { precision: 0, color: getThemeColors().font },
+                    grid: { color: getThemeColors().grid }
+                },
+                x: {
+                    ticks: { color: getThemeColors().font },
+                    grid: { color: getThemeColors().grid }
                 }
             }
         }
@@ -299,21 +357,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Gráfico de Categorias (Pie Chart)
     const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-    const categoryLabels = {{ category_data | map(attribute=0) | list | tojson }}; // Nomes das categorias
-    const categoryCounts = {{ category_data | map(attribute=1) | list | tojson }}; // Contagens das categorias
-
-    // Gerar cores dinamicamente para as categorias
+    const categoryLabels = {{ category_data | map(attribute=0) | list | tojson }};
+    const categoryCounts = {{ category_data | map(attribute=1) | list | tojson }};
     function generateColors(numColors) {
         const colors = [];
         for (let i = 0; i < numColors; i++) {
-            const hue = (i * 137.508) % 360; // Golden angle approximation
-            colors.push(`hsl(${hue}, 70%, 60%)`); // Saturação e luminosidade fixas
+            const hue = (i * 137.508) % 360;
+            colors.push(`hsl(${hue}, 70%, 60%)`);
         }
         return colors;
     }
     const backgroundColors = generateColors(categoryLabels.length);
-
-    new Chart(categoryCtx, {
+    const categoryChart = new Chart(categoryCtx, {
         type: 'pie',
         data: {
             labels: categoryLabels,
@@ -327,13 +382,8 @@ document.addEventListener('DOMContentLoaded', function() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    position: 'bottom'
-                },
-                title: {
-                    display: true,
-                    text: 'Tarefas por Categoria'
-                },
+                legend: { position: 'bottom', labels: { color: getThemeColors().font } },
+                title: { display: true, text: 'Tarefas por Categoria', color: getThemeColors().font },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
@@ -348,7 +398,105 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+
+    // --- Gráfico MELHORADO: Tarefas criadas por mês ---
+    const tpmLabels = {{ tasks_per_month_labels|tojson }};
+    const tpmData = {{ tasks_per_month_data|tojson }};
+    const tpmCtx = document.getElementById('tasksPerMonthChart').getContext('2d');
+    if (tpmLabels.length === 0) {
+        document.getElementById('tasksPerMonthChart').style.display = 'none';
+        document.getElementById('noTasksPerMonthData').style.display = 'block';
+    } else {
+        new Chart(tpmCtx, {
+            type: 'bar',
+            data: {
+                labels: tpmLabels.map(getMonthNamePTBR),
+                datasets: [{
+                    label: '', // Remove o label da legenda
+                    data: tpmData,
+                    backgroundColor: tpmLabels.map((_, i) => getThemeColors().bg[i % getThemeColors().bg.length]),
+                    borderRadius: 8,
+                    maxBarThickness: 38
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            title: ctx => 'Mês: ' + ctx[0].label,
+                            label: ctx => `Tarefas criadas: ${ctx.parsed.y}`
+                        }
+                    }
+                },
+                scales: {
+                    x: { 
+                        title: { display: true, text: 'Mês', color: getThemeColors().font },
+                        ticks: { color: getThemeColors().font }, 
+                        grid: { color: getThemeColors().grid } 
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Tarefas', color: getThemeColors().font },
+                        ticks: { color: getThemeColors().font, stepSize: 1, precision: 0 },
+                        grid: { color: getThemeColors().grid }
+                    }
+                }
+            }
+        });
+    }
+
+    // Gráfico de progresso dos checklists
+    const subtasksProgressCtx = document.getElementById('subtasksProgressChart').getContext('2d');
+    const subtasksProgressChart = new Chart(subtasksProgressCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Concluídas', 'Pendentes'],
+            datasets: [{
+                data: [{{ completed_subtasks|default(0) }}, {{ pending_subtasks|default(0) }}],
+                backgroundColor: [getThemeColors().bg[0], getThemeColors().bg[1]],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            plugins: { legend: { position: 'bottom', labels: { color: getThemeColors().font } } }
+        }
+    });
+
+    // Atualiza as cores dos gráficos ao alternar tema
+    document.getElementById('toggle-theme').addEventListener('click', function() {
+        setTimeout(() => {
+            // Progresso geral
+            progressChart.data.datasets[0].backgroundColor = [getThemeColors().bg[0], getThemeColors().bg[1]];
+            progressChart.options.plugins.legend.labels.color = getThemeColors().font;
+            progressChart.update();
+
+            // Prioridade
+            priorityChart.data.datasets[0].backgroundColor = [
+                getThemeColors().bg[0], getThemeColors().bg[1], getThemeColors().bg[2]
+            ];
+            priorityChart.data.datasets[0].borderColor = [
+                getThemeColors().bg[0], getThemeColors().bg[1], getThemeColors().bg[2]
+            ];
+            priorityChart.options.plugins.legend.labels.color = getThemeColors().font;
+            priorityChart.options.plugins.title.color = getThemeColors().font;
+            priorityChart.options.scales.x.ticks.color = getThemeColors().font;
+            priorityChart.options.scales.y.ticks.color = getThemeColors().font;
+            priorityChart.options.scales.x.grid.color = getThemeColors().grid;
+            priorityChart.options.scales.y.grid.color = getThemeColors().grid;
+            priorityChart.update();
+
+            // Categoria
+            categoryChart.options.plugins.legend.labels.color = getThemeColors().font;
+            categoryChart.options.plugins.title.color = getThemeColors().font;
+            categoryChart.update();
+
+            // Subtarefas progresso
+            subtasksProgressChart.data.datasets[0].backgroundColor = [getThemeColors().bg[0], getThemeColors().bg[1]];
+            subtasksProgressChart.options.plugins.legend.labels.color = getThemeColors().font;
+            subtasksProgressChart.update();
+        }, 200);
+    });
 });
 </script>
-
 {% endblock %}

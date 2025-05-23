@@ -38,9 +38,20 @@ class Task(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.datetime.now) # Adicionado timestamp
     updated_at = db.Column(db.DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now) # Adicionado timestamp de atualização
 
+    # RELACIONAMENTO COM SUBTAREFAS
+    subtasks = db.relationship('SubTask', backref='task', cascade='all, delete-orphan', lazy=True, order_by="SubTask.id")
 
     def __repr__(self):
         return f'<Task {self.title}>'
+
+class SubTask(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(255), nullable=False)
+    completed = db.Column(db.Boolean, default=False)
+    task_id = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<SubTask {self.description} - {"Concluída" if self.completed else "Pendente"}>'
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)

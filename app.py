@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file
-from models import db, User, Task, Category, Priority # Certifique-se que Priority é importado
+from models import db, User, Task, Category, Priority, SubTask  # SubTask importado!
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
-from collections import defaultdict
+from collections import defaultdict, Counter
 import datetime
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from flask_mail import Mail, Message
-from functools import wraps # Importar wraps aqui
+from functools import wraps
 
 # Novos imports para exportação
 from io import BytesIO
@@ -40,7 +40,7 @@ with app.app_context():
 
 # Decorator para exigir login
 def login_required(f):
-    @wraps(f) # Adiciona @wraps para preservar metadados da função original
+    @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
             flash('Você precisa estar logado para acessar esta página.', 'danger')
@@ -79,7 +79,19 @@ def export_pdf():
         y -= 18
         status = 'Concluída' if task.completed else 'Pendente'
         pdf.drawString(60, y, f"Status: {status}")
-        y -= 30
+        y -= 18
+        # Subtarefas (Checklist)
+        if task.subtasks:
+            pdf.drawString(60, y, "Subtarefas:")
+            y -= 18
+            for sub in task.subtasks:
+                checked = "✔" if sub.completed else "✗"
+                pdf.drawString(80, y, f"[{checked}] {sub.description}")
+                y -= 16
+                if y < 60:
+                    pdf.showPage()
+                    y = height - 40
+        y -= 12
         if y < 60:
             pdf.showPage()
             y = height - 40
@@ -99,13 +111,15 @@ def export_excel():
         categorias = ", ".join([c.name for c in task.categories]) if task.categories else ""
         vencimento = task.due_date.strftime('%d/%m/%Y') if task.due_date else ""
         status = "Concluída" if task.completed else "Pendente"
+        subtarefas = "\n".join([f"[{'x' if s.completed else ' '}] {s.description}" for s in task.subtasks])
         data.append({
             "Título": task.title,
             "Descrição": task.description or "",
             "Prioridade": prioridade.capitalize(),
             "Categorias": categorias,
             "Vencimento": vencimento,
-            "Status": status
+            "Status": status,
+            "Subtarefas": subtarefas
         })
     df = pd.DataFrame(data)
     buffer = BytesIO()
@@ -182,11 +196,8 @@ def dashboard():
     # Dados para gráfico de prioridade
     priority_counts = defaultdict(int)
     for task in user_tasks:
-        # Corrige se Priority for Enum, senão pega string
         priority_value = task.priority.value if hasattr(task.priority, 'value') else str(task.priority)
         priority_counts[priority_value] += 1
-    
-    # Garante que todas as prioridades sejam incluídas, mesmo que com 0 tarefas
     priority_labels = [p.value.capitalize() for p in Priority]
     priority_data = [priority_counts[p.value] for p in Priority]
 
@@ -195,9 +206,22 @@ def dashboard():
     for task in user_tasks:
         for category in task.categories:
             category_counts[category.name] += 1
-    
-    # Preparar dados para o template, ordenando por nome da categoria
     category_data = sorted(category_counts.items(), key=lambda item: item[0])
+
+    # Gráfico: tarefas criadas por mês
+    tasks_by_month = Counter()
+    for t in user_tasks:
+        if t.created_at:
+            key = t.created_at.strftime('%Y-%m')
+            tasks_by_month[key] += 1
+    months_sorted = sorted(tasks_by_month.keys())
+    tasks_per_month_labels = months_sorted
+    tasks_per_month_data = [tasks_by_month[m] for m in months_sorted]
+
+    # Gráfico: progresso de subtarefas (checklist)
+    total_subtasks = sum(len(t.subtasks) for t in user_tasks)
+    completed_subtasks = sum([sum(1 for s in t.subtasks if s.completed) for t in user_tasks])
+    pending_subtasks = total_subtasks - completed_subtasks
 
     # Filtragem de tarefas
     filter_priority = request.args.get('priority')
@@ -249,7 +273,11 @@ def dashboard():
                            priority_labels=priority_labels,
                            priority_data=priority_data,
                            category_data=category_data,
-                           now=now
+                           now=now,
+                           tasks_per_month_labels=tasks_per_month_labels,
+                           tasks_per_month_data=tasks_per_month_data,
+                           completed_subtasks=completed_subtasks,
+                           pending_subtasks=pending_subtasks
                            )
 
 @app.route('/add_task', methods=['GET', 'POST'])
@@ -263,11 +291,9 @@ def add_task():
         description = request.form.get('description')
         priority_str = request.form['priority']
         due_date_str = request.form.get('due_date')
-        category_names_str = request.form.get('categories') 
+        category_names_str = request.form.get('categories')
 
-        print(f"DEBUG: String de categorias recebida: '{category_names_str}'") # DEBUG PRINT
-
-        priority = Priority[priority_str.upper()] 
+        priority = Priority[priority_str.upper()]
 
         due_date = None
         if due_date_str:
@@ -279,15 +305,13 @@ def add_task():
 
         new_task = Task(title=title, description=description,
                         user_id=user_id, priority=priority, due_date=due_date)
-        
+
         # Adicionar categorias
         if category_names_str:
             category_names = [name.strip() for name in category_names_str.split(',') if name.strip()]
-            print(f"DEBUG: Nomes de categorias processados: {category_names}") # DEBUG PRINT
             for cat_name in category_names:
                 category = Category.query.filter_by(name=cat_name).first()
                 if not category:
-                    print(f"DEBUG: Criando nova categoria: {cat_name}") # DEBUG PRINT
                     category = Category(name=cat_name)
                     db.session.add(category)
                 new_task.categories.append(category)
@@ -295,15 +319,26 @@ def add_task():
         db.session.add(new_task)
         try:
             db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erro ao adicionar tarefa: {e}', 'danger')
+            return redirect(url_for('add_task'))
+
+        # ADICIONAR SUBTAREFAS (Checklist)
+        subtask_descriptions = request.form.getlist('subtask_description[]')
+        for desc in subtask_descriptions:
+            if desc.strip():
+                sub = SubTask(description=desc.strip(), completed=False, task=new_task)
+                db.session.add(sub)
+        try:
+            db.session.commit()
             flash('Tarefa adicionada com sucesso!', 'success')
         except Exception as e:
-            db.session.rollback() # Reverte a transação em caso de erro
-            flash(f'Erro ao adicionar tarefa: {e}', 'danger')
-            print(f"ERRO: Falha ao adicionar tarefa ou categoria: {e}") # DEBUG PRINT
-        
+            db.session.rollback()
+            flash(f'Erro ao adicionar subtarefas: {e}', 'danger')
+
         return redirect(url_for('dashboard'))
     return render_template('add_task.html', all_categories=all_categories)
-
 
 @app.route('/edit_task/<int:task_id>', methods=['GET', 'POST'])
 @login_required
@@ -319,7 +354,6 @@ def edit_task(task_id):
         task.title = request.form['title']
         task.description = request.form.get('description')
         task.priority = Priority[request.form['priority'].upper()]
-        
         due_date_str = request.form.get('due_date')
         if due_date_str:
             try:
@@ -334,7 +368,7 @@ def edit_task(task_id):
 
         # Atualizar categorias
         category_names_str = request.form.get('categories')
-        task.categories.clear() # Limpa as categorias existentes
+        task.categories.clear()
         if category_names_str:
             category_names = [name.strip() for name in category_names_str.split(',') if name.strip()]
             for cat_name in category_names:
@@ -343,18 +377,42 @@ def edit_task(task_id):
                     category = Category(name=cat_name)
                     db.session.add(category)
                 task.categories.append(category)
-        
+
+        # ATUALIZAR SUBTAREFAS (remove todas e adiciona as atuais)
+        SubTask.query.filter_by(task_id=task.id).delete()
+        subtask_descriptions = request.form.getlist('subtask_description[]')
+        subtask_completeds = request.form.getlist('subtask_completed[]')
+        for idx, desc in enumerate(subtask_descriptions):
+            if desc.strip():
+                completed = str(idx) in subtask_completeds
+                sub = SubTask(description=desc.strip(), completed=completed, task=task)
+                db.session.add(sub)
         try:
             db.session.commit()
             flash('Tarefa atualizada com sucesso!', 'success')
         except Exception as e:
-            db.session.rollback() # Reverte a transação em caso de erro
+            db.session.rollback()
             flash(f'Erro ao atualizar tarefa: {e}', 'danger')
-            print(f"ERRO: Falha ao atualizar tarefa ou categoria: {e}") # DEBUG PRINT
-            
         return redirect(url_for('dashboard'))
-    
+
     return render_template('edit_task.html', task=task, all_categories=all_categories)
+
+@app.route('/toggle_subtask/<int:subtask_id>', methods=['POST'])
+@login_required
+def toggle_subtask(subtask_id):
+    sub = SubTask.query.get_or_404(subtask_id)
+    task = Task.query.get(sub.task_id)
+    if task.user_id != session['user_id']:
+        flash('Você não tem permissão para modificar esta subtarefa.', 'danger')
+        return redirect(url_for('dashboard'))
+    sub.completed = not sub.completed
+    try:
+        db.session.commit()
+        flash('Checklist atualizado!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Erro ao atualizar subtarefa: {e}', 'danger')
+    return redirect(url_for('dashboard'))
 
 @app.route('/delete_task/<int:task_id>', methods=['POST'])
 @login_required
@@ -363,7 +421,6 @@ def delete_task(task_id):
     if task.user_id != session['user_id']:
         flash('Você não tem permissão para excluir esta tarefa.', 'danger')
         return redirect(url_for('dashboard'))
-    
     try:
         db.session.delete(task)
         db.session.commit()
@@ -371,8 +428,6 @@ def delete_task(task_id):
     except Exception as e:
         db.session.rollback()
         flash(f'Erro ao excluir tarefa: {e}', 'danger')
-        print(f"ERRO: Falha ao excluir tarefa: {e}")
-        
     return redirect(url_for('dashboard'))
 
 @app.route('/complete_task/<int:task_id>', methods=['POST'])
@@ -382,18 +437,14 @@ def complete_task(task_id):
     if task.user_id != session['user_id']:
         flash('Você não tem permissão para modificar esta tarefa.', 'danger')
         return redirect(url_for('dashboard'))
-    
-    task.completed = not task.completed # Alterna o status
+    task.completed = not task.completed
     try:
         db.session.commit()
         flash('Status da tarefa atualizado!', 'success')
     except Exception as e:
         db.session.rollback()
         flash(f'Erro ao atualizar status: {e}', 'danger')
-        print(f"ERRO: Falha ao atualizar status da tarefa: {e}")
-
     return redirect(url_for('dashboard'))
-
 
 @app.route('/change_password', methods=['GET', 'POST'])
 @login_required
@@ -401,23 +452,18 @@ def change_password():
     if request.method == 'POST':
         user_id = session['user_id']
         user = User.query.get(user_id)
-        
         current_password = request.form['current_password']
         new_password = request.form['new_password']
         confirm_password = request.form['confirm_password']
-
         if not check_password_hash(user.password, current_password):
             flash('Senha atual incorreta.', 'danger')
             return redirect(url_for('change_password'))
-
         if new_password != confirm_password:
             flash('A nova senha e a confirmação não coincidem.', 'danger')
             return redirect(url_for('change_password'))
-
         if len(new_password) < 6:
             flash('A nova senha deve ter pelo menos 6 caracteres.', 'danger')
             return redirect(url_for('change_password'))
-
         user.password = generate_password_hash(new_password)
         try:
             db.session.commit()
@@ -425,22 +471,17 @@ def change_password():
         except Exception as e:
             db.session.rollback()
             flash(f'Erro ao alterar senha: {e}', 'danger')
-            print(f"ERRO: Falha ao alterar senha: {e}")
-        
         return redirect(url_for('dashboard'))
     return render_template('change_password.html')
 
-# Esqueci a senha
 @app.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
         email = request.form['email']
         user = User.query.filter_by(email=email).first()
-
         if user:
             token = serializer.dumps(user.id, salt='password-reset')
             reset_link = url_for('reset_password', token=token, _external=True)
-
             msg = Message('Redefinição de Senha - Task Manager',
                           recipients=[user.email])
             msg.body = f'''
@@ -454,43 +495,34 @@ Se você não solicitou isso, ignore este e-mail.
                 flash('Um link de redefinição de senha foi enviado para seu e-mail.', 'info')
             except Exception as e:
                 flash(f'Erro ao enviar e-mail: {e}. Verifique as configurações do servidor de e-mail.', 'danger')
-                print(f"Erro ao enviar e-mail: {e}") # Para depuração no console
         else:
             flash('Nenhuma conta encontrada com este e-mail.', 'danger')
-            
         return redirect(url_for('forgot_password'))
-
     return render_template('forgot_password.html')
 
-# Redefinir senha
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     try:
-        user_id = serializer.loads(token, salt='password-reset', max_age=3600)  # Token válido por 1 hora
+        user_id = serializer.loads(token, salt='password-reset', max_age=3600)
         user = User.query.get(user_id)
-        if not user: # Verifica se o usuário existe para o ID do token
+        if not user:
             flash('Link de redefinição inválido.', 'danger')
             return redirect(url_for('forgot_password'))
     except SignatureExpired:
         flash('O link de redefinição expirou. Solicite um novo.', 'danger')
         return redirect(url_for('forgot_password'))
-    except Exception as e: # Captura exceções mais gerais para link inválido
+    except Exception as e:
         flash('Link de redefinição inválido.', 'danger')
-        print(f"Erro ao carregar token: {e}") # Para depuração
         return redirect(url_for('forgot_password'))
-
     if request.method == 'POST':
         new_password = request.form['new_password']
         confirm_password = request.form['confirm_password']
-
         if new_password != confirm_password:
             flash('A nova senha e a confirmação não coincidem.', 'danger')
             return redirect(url_for('reset_password', token=token))
-
         if len(new_password) < 6:
             flash('A nova senha deve ter pelo menos 6 caracteres.', 'danger')
             return redirect(url_for('reset_password', token=token))
-
         user.password = generate_password_hash(new_password)
         try:
             db.session.commit()
@@ -498,9 +530,7 @@ def reset_password(token):
         except Exception as e:
             db.session.rollback()
             flash(f'Erro ao redefinir senha: {e}', 'danger')
-            print(f"ERRO: Falha ao redefinir senha: {e}")
-            
-        return redirect(url_for('login')) # Redireciona para login após redefinição
+        return redirect(url_for('login'))
     return render_template('reset_password.html', token=token)
 
 if __name__ == '__main__':
