@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file
 from models import db, User, Task, Category, Priority # Certifique-se que Priority é importado
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -7,6 +7,12 @@ import datetime
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from flask_mail import Mail, Message
 from functools import wraps # Importar wraps aqui
+
+# Novos imports para exportação
+from io import BytesIO
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+import pandas as pd
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'  # Use uma chave mais segura em produção
@@ -42,7 +48,73 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# Rotas
+# ------------- EXPORTAÇÃO PDF/EXCEL ----------------
+@app.route('/export/pdf')
+@login_required
+def export_pdf():
+    user_id = session['user_id']
+    tasks = Task.query.filter_by(user_id=user_id).all()
+    buffer = BytesIO()
+    pdf = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+    y = height - 40
+    pdf.setFont("Helvetica-Bold", 16)
+    pdf.drawString(40, y, "Relatório de Tarefas")
+    pdf.setFont("Helvetica", 12)
+    y -= 30
+
+    for task in tasks:
+        pdf.drawString(40, y, f"Título: {task.title}")
+        y -= 18
+        pdf.drawString(60, y, f"Descrição: {task.description or ''}")
+        y -= 18
+        prioridade = task.priority.value if hasattr(task.priority, 'value') else str(task.priority)
+        pdf.drawString(60, y, f"Prioridade: {prioridade.capitalize()}")
+        y -= 18
+        categorias = ', '.join([c.name for c in task.categories]) if task.categories else 'N/A'
+        pdf.drawString(60, y, f"Categorias: {categorias}")
+        y -= 18
+        vencimento = task.due_date.strftime('%d/%m/%Y') if task.due_date else 'N/A'
+        pdf.drawString(60, y, f"Vencimento: {vencimento}")
+        y -= 18
+        status = 'Concluída' if task.completed else 'Pendente'
+        pdf.drawString(60, y, f"Status: {status}")
+        y -= 30
+        if y < 60:
+            pdf.showPage()
+            y = height - 40
+
+    pdf.save()
+    buffer.seek(0)
+    return send_file(buffer, as_attachment=True, download_name="tarefas.pdf", mimetype='application/pdf')
+
+@app.route('/export/excel')
+@login_required
+def export_excel():
+    user_id = session['user_id']
+    tasks = Task.query.filter_by(user_id=user_id).all()
+    data = []
+    for task in tasks:
+        prioridade = task.priority.value if hasattr(task.priority, 'value') else str(task.priority)
+        categorias = ", ".join([c.name for c in task.categories]) if task.categories else ""
+        vencimento = task.due_date.strftime('%d/%m/%Y') if task.due_date else ""
+        status = "Concluída" if task.completed else "Pendente"
+        data.append({
+            "Título": task.title,
+            "Descrição": task.description or "",
+            "Prioridade": prioridade.capitalize(),
+            "Categorias": categorias,
+            "Vencimento": vencimento,
+            "Status": status
+        })
+    df = pd.DataFrame(data)
+    buffer = BytesIO()
+    with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+        df.to_excel(writer, index=False, sheet_name="Tarefas")
+    buffer.seek(0)
+    return send_file(buffer, as_attachment=True, download_name="tarefas.xlsx", mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+# ---------------- ROTAS PADRÃO --------------------
 @app.route('/')
 def index():
     if 'user_id' in session:
@@ -110,9 +182,11 @@ def dashboard():
     # Dados para gráfico de prioridade
     priority_counts = defaultdict(int)
     for task in user_tasks:
-        priority_counts[task.priority.value] += 1
+        # Corrige se Priority for Enum, senão pega string
+        priority_value = task.priority.value if hasattr(task.priority, 'value') else str(task.priority)
+        priority_counts[priority_value] += 1
     
-    # Garantir que todas as prioridades sejam incluídas, mesmo que com 0 tarefas
+    # Garante que todas as prioridades sejam incluídas, mesmo que com 0 tarefas
     priority_labels = [p.value.capitalize() for p in Priority]
     priority_data = [priority_counts[p.value] for p in Priority]
 
@@ -135,7 +209,6 @@ def dashboard():
 
     if filter_priority and filter_priority != 'all':
         try:
-            # Converte a string de prioridade para o enum Priority
             enum_priority = Priority[filter_priority.upper()]
             filtered_tasks = [task for task in filtered_tasks if task.priority == enum_priority]
         except KeyError:
@@ -152,20 +225,14 @@ def dashboard():
 
     if filter_due_date:
         try:
-            # Converte a string de data para objeto datetime
             filter_date_obj = datetime.datetime.strptime(filter_due_date, '%Y-%m-%d').date()
-            # Filtra tarefas cuja due_date seja igual ou anterior à data de filtro E não esteja concluída
             filtered_tasks = [task for task in filtered_tasks if task.due_date and task.due_date.date() <= filter_date_obj and not task.completed]
         except ValueError:
             flash('Formato de data inválido.', 'warning')
 
-    # Ordenar tarefas filtradas por data de vencimento (as mais próximas primeiro) e depois por prioridade
-    filtered_tasks.sort(key=lambda x: (x.completed, x.due_date if x.due_date else datetime.datetime.max, x.priority.value))
+    filtered_tasks.sort(key=lambda x: (x.completed, x.due_date if x.due_date else datetime.datetime.max, x.priority.value if hasattr(x.priority, 'value') else str(x.priority)))
 
-    # Obter todas as categorias para o filtro
     all_categories = Category.query.all()
-    
-    # Passar a data/hora atual para o template para comparação de datas de vencimento
     now = datetime.datetime.now()
 
     return render_template('dashboard.html',

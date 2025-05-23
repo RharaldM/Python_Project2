@@ -29,3 +29,101 @@
     background-color: transparent;
     border: none;
 }
+
+/* ------- DARK MODE --------- */
+body.dark-mode {
+    background-color: #181818 !important;
+    color: #f1f1f1 !important;
+}
+
+/* Navbar Dark Mode */
+body.dark-mode .navbar,
+body.dark-mode .navbar-dark.bg-dark,
+body.dark-mode footer.bg-dark {
+    background-color: #23272b !important;
+}
+
+body.dark-mode .navbar-brand,
+body.dark-mode .nav-link,
+body.dark-mode footer {
+    color: #f1f1f1 !important;
+}
+body.dark-mode .nav-link.active, 
+body.dark-mode .nav-link:focus {
+    color: #ffe082 !important;
+}
+
+/* Cards e containers */
+body.dark-mode .card,
+body.dark-mode .modal-content,
+body.dark-mode .alert {
+    background-color: #242526 !important;
+    color: #f1f1f1 !important;
+    border-color: #343a40;
+}
+
+/* Tabela */
+body.dark-mode .table,
+body.dark-mode .table-hover tbody tr {
+    background-color: #222 !important;
+    color: #f1f1f1 !important;
+}
+
+/* Borda de inputs e selects */
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+    background-color: #23272b !important;
+    color: #f1f1f1 !important;
+    border-color: #444 !important;
+}
+
+/* Botão toggle */
+#toggle-dark-mode {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 9999;
+    background: #23272b;
+    color: #ffe082;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    font-size: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.14);
+    transition: background 0.3s, color 0.3s;
+}
+#toggle-dark-mode:hover {
+    background: #444;
+    color: #ffd54f;
+}
+
+/* Alertas */
+body.dark-mode .alert {
+    background-color: #23272b !important;
+    color: #ffe082 !important;
+    border-color: #444 !important;
+}
+body.dark-mode .alert-success { background-color: #204529 !important; }
+body.dark-mode .alert-danger { background-color: #491217 !important; }
+body.dark-mode .alert-warning { background-color: #665800 !important; }
+body.dark-mode .alert-info    { background-color: #095065 !important; }
+
+/* Badges */
+body.dark-mode .badge.text-bg-danger    { background-color: #ff5252 !important; color: #fff !important; }
+body.dark-mode .badge.text-bg-warning   { background-color: #ffd54f !important; color: #23272b !important; }
+body.dark-mode .badge.text-bg-info      { background-color: #4fc3f7 !important; color: #23272b !important; }
+body.dark-mode .badge.text-bg-secondary { background-color: #757575 !important; color: #fff !important; }
+body.dark-mode .badge.text-bg-success   { background-color: #66bb6a !important; color: #fff !important; }
+
+/* Category Tag */
+body.dark-mode .category-tag {
+    background-color: #245d69 !important;
+    color: #e1e1e1 !important;
+}
+
+/* Datalist option */
+body.dark-mode option {
+    background: #23272b;
+    color: #fff;
+}
