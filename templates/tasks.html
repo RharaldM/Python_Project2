@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Teste Categoria com Botão Fechar</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<style>
+.category-tag {
+    position: relative;
+    padding-right: 25px !important;
+    display: inline-flex;
+    align-items: center;
+    background-color: #eee;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-right: 5px;
+}
+
+.category-tag .btn-close {
+    margin-left: 8px;
+    opacity: 0.8;
+    width: 1em;
+    height: 1em;
+    cursor: pointer;
+    position: relative;
+}
+
+.category-tag .btn-close:hover {
+    opacity: 1;
+}
+</style>
+</head>
+<body>
+
+<span class="category-tag">
+  Categoria 1
+  <button type="button" class="btn-close" aria-label="Close"></button>
+</span>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
