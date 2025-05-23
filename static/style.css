@@ -35,19 +35,30 @@ body {
    Este seletor '.category-tag' pode ser mais específico ou você pode remover essas regras
    se o badge padrão do Bootstrap for suficiente. */
 .category-tag {
-    display: inline-flex;
+    display: inline-flex !important;
     align-items: center;
-    padding-right: 0.5em;
+    padding: 0.35em 0.65em;
+    margin: 0.2em;
+    background-color: #0dcaf0; /* cor do bg-info */
+    color: white;
+    border-radius: 0.375rem;
 }
-/* O botão de remover categoria agora usa btn-close do Bootstrap */
-.category-tag .btn-close {
-    font-size: 0.8em;
-    margin-left: 0.5em;
-    opacity: 0.7;
+
+/* --- INÍCIO DA CORREÇÃO PARA O BOTÃO DE FECHAR CATEGORIA --- */
+/* Força o tamanho e a cor do ícone 'X' para aparecer. */
+.btn-close {
+    display: inline-block !important;
+    width: 0.8em !important;
+    height: 0.8em !important;
+    margin-left: 0.5em !important;
+    background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/0.8em auto no-repeat !important;
+    opacity: 0.8;
 }
+
 .category-tag .btn-close:hover {
-    opacity: 1;
+    opacity: 0.8 !important; /* Define opacidade no hover para um efeito visual */
 }
+/* --- FIM DA CORREÇÃO PARA O BOTÃO DE FECHAR CATEGORIA --- */
 
 
 /* Ajustes para o HR separador visual, se necessário */
@@ -56,16 +67,93 @@ hr {
     border-top: 1px solid rgba(0, 0, 0, 0.1); /* Linha divisória */
 }
 
+.btn-close-white {
+    visibility: visible !important;
+    opacity: 0.8 !important;
+}
+
 /* Estilos para o card da tarefa quando estiver atrasada.
    A classe `border-danger` do Bootstrap já cuida da borda,
    mas você pode querer um fundo diferente. */
 .card.border-danger {
-    background-color: #ffe6e6; /* Fundo levemente avermelhado para tarefas atrasadas */
+    background-color: #ffe6e6; /* Fundo mais claro para tarefas atrasadas */
 }
 
-/* Estilos para tarefas concluídas.
-   `bg-light-subtle` já dá um fundo claro, e `text-decoration-line-through text-muted` risca o texto.
-   Este CSS é mais para ajustes se o padrão do Bootstrap não for suficiente. */
-.card.bg-light-subtle .badge {
-    opacity: 0.7; /* Suaviza as tags de categoria em tarefas concluídas */
+/* Estilos para o badge de prioridade */
+.priority-badge {
+    padding: 0.35em 0.65em;
+    border-radius: 0.375rem;
+    font-size: 0.75em;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    display: inline-block;
+}
+
+.priority-badge.bg-success { background-color: #28a745 !important; } /* Baixa */
+.priority-badge.bg-warning { background-color: #ffc107 !important; } /* Média */
+.priority-badge.bg-danger { background-color: #dc3545 !important; }   /* Alta */
+
+/* Estilos para o status da tarefa */
+.task-status-badge {
+    padding: 0.35em 0.65em;
+    border-radius: 0.375rem;
+    font-size: 0.75em;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    display: inline-block;
+}
+
+.task-status-badge.bg-success { background-color: #28a745 !important; } /* Concluída */
+.task-status-badge.bg-secondary { background-color: #6c757d !important; } /* Pendente */
+
+/* Estilos para o formulário de login/cadastro centralizado */
+.form-signin {
+    max-width: 400px;
+    padding: 15px;
+    margin: auto;
+}
+
+.form-signin .form-floating:focus-within {
+    z-index: 2;
+}
+
+.btn-close {
+  display: inline-block !important;
+  background: red !important; /* Só para testar */
+  width: 1.5em !important;
+  height: 1.5em !important;
+}
+.form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+/* Ajustes para o layout de cards no dashboard */
+.card-body {
+    flex-grow: 1; /* Permite que o corpo do card se expanda */
+}
+
+.card.h-100 {
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px; /* Altura fixa para os gráficos */
+    width: 100%;
+    margin-bottom: 20px;
 }
