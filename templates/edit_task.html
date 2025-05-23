@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Editar Tarefa{% endblock %}
+{% block content %}
+<h2 class="mb-4">Editar Tarefa</h2>
+<form method="post">
+    <div class="mb-3">
+        <label for="title" class="form-label">Título da Tarefa:</label>
+        <input type="text" class="form-control" id="title" name="title" value="{{ task.title }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="description" class="form-label">Descrição:</label>
+        <textarea class="form-control" id="description" name="description">{{ task.description }}</textarea>
+    </div>
+
+    <div class="mb-3">
+        <label for="category-input" class="form-label">Categorias (digite ou selecione):</label>
+        <div class="input-group">
+            <input type="text" class="form-control" id="category-input" placeholder="Adicionar categoria..." list="existing-categories">
+            <datalist id="existing-categories">
+                {% for category in all_categories %}
+                    <option value="{{ category.name }}">
+                {% endfor %}
+            </datalist>
+            <button class="btn btn-outline-secondary" type="button" id="add-category-btn">Adicionar</button>
+        </div>
+        <div id="selected-categories-list" class="mt-2 d-flex flex-wrap gap-2">
+        </div>
+        <input type="hidden" name="categories" id="hidden-categories-input">
+        <div id="initial-categories-data" data-categories="{{ task.categories | map(attribute='name') | list | tojson }}"></div>
+    </div>
+
+    <div class="mb-3">
+        <label for="priority" class="form-label">Prioridade:</label>
+        <select class="form-select" id="priority" name="priority">
+            <option value="high" {% if task.priority.value == 'high' %}selected{% endif %}>Alta</option>
+            <option value="medium" {% if task.priority.value == 'medium' %}selected{% endif %}>Média</option>
+            <option value="low" {% if task.priority.value == 'low' %}selected{% endif %}>Baixa</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="due_date" class="form-label">Data de Vencimento:</label>
+        <input type="date" class="form-control" id="due_date" name="due_date"
+               value="{{ task.due_date.strftime('%Y-%m-%d') if task.due_date else '' }}">
+    </div>
+
+    <div class="form-check mb-3">
+        <input type="checkbox" class="form-check-input" id="completed" name="completed" {% if task.completed %}checked{% endif %}>
+        <label class="form-check-label" for="completed">Tarefa Concluída</label>
+    </div>
+
+    <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

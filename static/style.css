@@ -1,0 +1,83 @@
+/* Seu CSS personalizado para overrides e estilos que o Bootstrap não cobre */
+
+/* Configurações globais e variáveis (pode manter, embora Bootstrap defina muitas cores) */
+:root {
+    --color-primary: #0077b6; /* Azul primário */
+    --color-secondary: #00b4d8; /* Azul secundário */
+    --color-bg: #f8f9fa; /* Fundo claro */
+    --color-text: #333; /* Cor padrão do texto */
+    --color-white: #ffffff;
+    --color-dark: #343a40; /* Cor escura para cabeçalhos/rodapés */
+    --color-highlight: #48cae4; /* Cor de destaque */
+    --font-primary: 'Poppins', sans-serif;
+
+    /* Cores de categorias (mantidas para exemplo, Bootstrap tem `badge`) */
+    --category-bg: #e0f2f7;
+    --category-text: #0077b6;
+}
+
+body {
+    font-family: var(--font-primary);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ajustes para o container principal de mensagens */
+.alert-container {
+    margin-top: 20px; /* Adiciona espaço acima dos alertas */
+}
+
+/* Estilos para as tags de categoria, se o `badge` do Bootstrap não for suficiente */
+/* ATENÇÃO: O category_handler.js já adiciona classes de badge do Bootstrap.
+   Este seletor '.category-tag' pode ser mais específico ou você pode remover essas regras
+   se o badge padrão do Bootstrap for suficiente. */
+.category-tag {
+    display: inline-flex;
+    align-items: center;
+    /* Remover background-color e color se estiver usando text-bg-info */
+    /* background-color: var(--category-bg); */
+    /* color: var(--category-text); */
+    padding: 0.3em 0.6em; /* Ajustado para tamanho de badge */
+    border-radius: 0.375rem; /* Padrão do Bootstrap */
+    font-size: 0.85em; /* Ligeiramente menor para parecer mais com badge */
+    font-weight: 600;
+    white-space: nowrap;
+    line-height: 1; /* Alinhamento vertical */
+}
+
+/* O botão de remover categoria agora usa btn-close do Bootstrap */
+.category-tag .btn-close {
+    font-size: 0.7em; /* Ajusta o tamanho do X */
+    margin-left: 0.5em; /* Espaço entre texto e X */
+    padding: 0;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.category-tag .btn-close:hover {
+    opacity: 1;
+}
+
+
+/* Ajustes para o HR separador visual, se necessário */
+hr {
+    margin: 2rem 0; /* Espaço vertical */
+    border-top: 1px solid rgba(0, 0, 0, 0.1); /* Linha divisória */
+}
+
+/* Estilos para o card da tarefa quando estiver atrasada.
+   A classe `border-danger` do Bootstrap já cuida da borda,
+   mas você pode querer um fundo diferente. */
+.card.border-danger {
+    background-color: #ffe6e6; /* Fundo levemente avermelhado para tarefas atrasadas */
+}
+
+/* Estilos para tarefas concluídas.
+   `bg-light-subtle` já dá um fundo claro, e `text-decoration-line-through text-muted` risca o texto.
+   Este CSS é mais para ajustes se o padrão do Bootstrap não for suficiente. */
+.card.bg-light-subtle .badge {
+    opacity: 0.7; /* Suaviza as tags de categoria em tarefas concluídas */
+}

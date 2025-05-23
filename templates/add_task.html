@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Adicionar Tarefa{% endblock %}
+{% block content %}
+<h2 class="mb-4">Adicionar Nova Tarefa</h2>
+<form method="post" action="{{ url_for('add_task') }}">
+    <div class="mb-3">
+        <label for="title" class="form-label">Título da Tarefa:</label>
+        <input type="text" class="form-control" id="title" name="title" placeholder="Ex: Comprar mantimentos" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="description" class="form-label">Descrição:</label>
+        <textarea class="form-control" id="description" name="description" rows="3" placeholder="Ex: Leite, ovos, pão..."></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label for="category-input" class="form-label">Categorias (digite ou selecione):</label>
+        <div class="input-group">
+            <input type="text" class="form-control" id="category-input" placeholder="Adicionar categoria..." list="existing-categories">
+            <datalist id="existing-categories">
+                {% for category in all_categories %}
+                    <option value="{{ category.name }}">
+                {% endfor %}
+            </datalist>
+            <button class="btn btn-outline-secondary" type="button" id="add-category-btn">Adicionar</button>
+        </div>
+        <div id="selected-categories-list" class="mt-2 d-flex flex-wrap gap-2">
+            </div>
+        <input type="hidden" name="categories" id="hidden-categories-input">
+    </div>
+
+    <div class="mb-3">
+        <label for="priority" class="form-label">Prioridade:</label>
+        <select class="form-select" id="priority" name="priority" required>
+            <option value="low">Baixa</option>
+            <option value="medium" selected>Média</option>
+            <option value="high">Alta</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="due_date" class="form-label">Data de Vencimento (Opcional):</label>
+        <input type="date" class="form-control" id="due_date" name="due_date">
+    </div>
+
+    <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-primary">Adicionar Tarefa</button>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}
