@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Adicionar Tarefa{% endblock %}
+
 {% block content %}
 <h2 class="mb-4">Adicionar Nova Tarefa</h2>
 <form method="post" action="{{ url_for('add_task') }}">
@@ -24,8 +25,7 @@
             </datalist>
             <button class="btn btn-outline-secondary" type="button" id="add-category-btn">Adicionar</button>
         </div>
-        <div id="selected-categories-list" class="mt-2 d-flex flex-wrap gap-2">
-            </div>
+        <div id="selected-categories-list" class="mt-2 d-flex flex-wrap gap-2"></div>
         <input type="hidden" name="categories" id="hidden-categories-input">
     </div>
 
@@ -48,4 +48,9 @@
         <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">Cancelar</a>
     </div>
 </form>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='category_handler.js') }}"></script>
 {% endblock %}
