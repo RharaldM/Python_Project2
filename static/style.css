@@ -1,3 +1,4 @@
+/* Estilos para category-tag (mantidos do código anterior) */
 .category-tag {
     position: relative;
     display: inline-flex;
@@ -25,275 +26,149 @@
 }
 
 .btn-close-white {
-    filter: brightness(0) invert(1); /* Simplifica o filtro para garantir que o "x" seja branco */
+    filter: brightness(0) invert(1);
     background-color: transparent;
     border: none;
 }
 
-/* ------- DARK MODE --------- */
-body.dark-mode {
-    background-color: #121212 !important; /* Melhor contraste para fundo */
-    color: #e0e0e0 !important; /* Melhor contraste para textos */
-}
-
-/* Navbar Dark Mode */
-body.dark-mode .navbar,
-body.dark-mode .navbar-dark.bg-dark,
-body.dark-mode footer.bg-dark {
-    background-color: #23272b !important;
-}
-
-body.dark-mode .navbar-brand,
-body.dark-mode .nav-link,
-body.dark-mode footer {
-    color: #f1f1f1 !important;
-}
-body.dark-mode .nav-link.active, 
-body.dark-mode .nav-link:focus {
-    color: #ffe082 !important;
-}
-
-/* Cards e containers */
-body.dark-mode .card,
-body.dark-mode .modal-content,
-body.dark-mode .alert {
-    background-color: #242526 !important;
-    color: #f1f1f1 !important;
-    border-color: #343a40;
-}
-
-/* Tabela */
-body.dark-mode .table,
-body.dark-mode .table-hover tbody tr {
-    background-color: #222 !important;
-    color: #f1f1f1 !important;
-}
-
-/* Borda de inputs e selects */
-body.dark-mode .form-control,
-body.dark-mode .form-select {
-    background-color: #23272b !important;
-    color: #f1f1f1 !important;
-    border-color: #444 !important;
-}
-
-/* Botão toggle */
-#toggle-dark-mode {
-    position: fixed;
-    right: 1rem;
-    bottom: 1rem;
-    z-index: 9999;
-    background: #23272b;
-    color: #ffe082;
-    border: none;
-    border-radius: 50%;
-    width: 48px;
-    height: 48px;
-    font-size: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.14);
-    transition: background 0.3s, color 0.3s;
-}
-#toggle-dark-mode:hover {
-    background: #444;
-    color: #ffd54f;
-}
-
-/* Alertas */
-body.dark-mode .alert {
-    background-color: #23272b !important;
-    color: #ffe082 !important;
-    border-color: #444 !important;
-}
-body.dark-mode .alert-success { background-color: #204529 !important; }
-body.dark-mode .alert-danger { background-color: #491217 !important; }
-body.dark-mode .alert-warning { background-color: #665800 !important; }
-body.dark-mode .alert-info    { background-color: #095065 !important; }
-
-/* Badges */
-body.dark-mode .badge.text-bg-danger    { background-color: #ff5252 !important; color: #fff !important; }
-body.dark-mode .badge.text-bg-warning   { background-color: #ffd54f !important; color: #23272b !important; }
-body.dark-mode .badge.text-bg-info      { background-color: #4fc3f7 !important; color: #23272b !important; }
-body.dark-mode .badge.text-bg-secondary { background-color: #757575 !important; color: #fff !important; }
-body.dark-mode .badge.text-bg-success   { background-color: #66bb6a !important; color: #fff !important; }
-
-/* Category Tag */
-body.dark-mode .category-tag {
-    background-color: #245d69 !important;
-    color: #e1e1e1 !important;
-}
-
-/* Datalist option */
-body.dark-mode option {
-    background: #23272b;
-    color: #fff;
-}
-
-/* Animações para botões */
-button, .btn {
-    transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-button:hover, .btn:hover {
-    background-color: #0077cc !important;
-    transform: scale(1.05);
-}
-
-/* Feedback visual para links */
-a {
-    transition: color 0.3s ease;
-}
-
-a:hover {
-    color: #ff9900;
-    text-decoration: underline;
-}
-
-/* Foco visível para acessibilidade */
-:focus {
-    outline: 2px solid #0077cc;
-    outline-offset: 2px;
-}
-
-/* Melhorias nas mensagens de alerta */
-.alert {
-    transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-.alert-dismissible {
-    transform: translateY(0);
-}
-
-/* Feedback ao fechar alertas */
-.alert-dismissible.fade.show {
-    transform: translateY(-10%);
-    opacity: 0;
-}
-/* -------- VARIÁVEIS DE CORES -------- */
-:root {
-    --color-text-light: #212529; /* Texto no modo claro */
-    --color-background-light: #ffffff; /* Fundo no modo claro */
-    --color-link-light: #0d6efd; /* Link no modo claro */
-
-    --color-text-dark: #f1f1f1; /* Texto no modo escuro */
-    --color-background-dark: #181818; /* Fundo no modo escuro */
-    --color-link-dark: #4fc3f7; /* Link no modo escuro */
-}
-
-/* -------- ESTILOS GERAIS -------- */
+/* Estilos gerais para modo claro (padrão) */
 body {
-    color: var(--color-text-light);
-    background-color: var(--color-background-light);
+    background-color: #f8f9fa; /* Fundo claro */
+    color: #212529; /* Texto escuro */
 }
 
+/* Estilos para modo escuro */
 body.dark-mode {
-    color: var(--color-text-dark);
-    background-color: var(--color-background-dark);
+    background-color: #212529; /* Fundo escuro */
+    color: #f8f9fa; /* Texto claro */
 }
 
-/* Links */
-a {
-    color: var(--color-link-light);
-    transition: color 0.3s ease;
-}
-
+/* Ajustes para links no modo escuro */
 body.dark-mode a {
-    color: var(--color-link-dark);
+    color: #4dabf7; /* Links azuis claros no modo escuro */
 }
 
-/* -------- COMPONENTES -------- */
-/* Navbar */
-body.dark-mode .navbar,
-body.dark-mode .navbar-dark.bg-dark,
-body.dark-mode footer.bg-dark {
-    background-color: #23272b !important;
+body.dark-mode a:hover {
+    color: #74c0fc; /* Cor mais clara ao passar o mouse */
 }
 
-body.dark-mode .navbar-brand,
-body.dark-mode .nav-link,
-body.dark-mode footer {
-    color: var(--color-text-dark);
-}
-
-body.dark-mode .nav-link.active, 
-body.dark-mode .nav-link:focus {
-    color: #ffe082 !important;
-}
-
-/* Alertas */
-.alert {
-    background-color: #f8f9fa; /* Fundo do alerta */
-    color: var(--color-text-light); /* Texto do alerta */
-    border-color: #dee2e6; /* Borda do alerta */
-}
-
+/* Ajustes para alertas no modo escuro */
 body.dark-mode .alert {
-    background-color: #23272b !important;
-    color: #ffe082 !important;
-    border-color: #444 !important;
+    color: #f8f9fa; /* Texto claro para alertas */
 }
 
-body.dark-mode .alert-success { background-color: #204529 !important; }
-body.dark-mode .alert-danger { background-color: #491217 !important; }
-body.dark-mode .alert-warning { background-color: #665800 !important; }
-body.dark-mode .alert-info    { background-color: #095065 !important; }
-
-/* Botões */
-button, .btn {
-    transition: background-color 0.3s ease, transform 0.3s ease;
+/* Ajustes para diferentes tipos de alertas no modo escuro */
+body.dark-mode .alert-primary {
+    background-color: #1a4971;
+    border-color: #153e61;
 }
 
-button:hover, .btn:hover {
-    background-color: #0077cc !important;
-    transform: scale(1.05);
+body.dark-mode .alert-success {
+    background-color: #2e6641;
+    border-color: #245530;
 }
 
-body.dark-mode button, body.dark-mode .btn {
-    color: var(--color-text-dark);
-    background-color: #444;
-    border-color: #555;
+body.dark-mode .alert-info {
+    background-color: #1a5e7a;
+    border-color: #144e66;
 }
 
-/* Inputs e Selects */
+body.dark-mode .alert-warning {
+    background-color: #996107;
+    border-color: #804d00;
+}
+
+body.dark-mode .alert-danger {
+    background-color: #91232f;
+    border-color: #7b1c26;
+}
+
+/* Ajustes para formulários no modo escuro */
 body.dark-mode .form-control,
 body.dark-mode .form-select {
-    background-color: #23272b !important;
-    color: var(--color-text-dark) !important;
-    border-color: #444 !important;
+    background-color: #343a40;
+    color: #f8f9fa;
+    border-color: #495057;
 }
 
-/* Badges */
-body.dark-mode .badge.text-bg-danger    { background-color: #ff5252 !important; color: #fff !important; }
-body.dark-mode .badge.text-bg-warning   { background-color: #ffd54f !important; color: #23272b !important; }
-body.dark-mode .badge.text-bg-info      { background-color: #4fc3f7 !important; color: #23272b !important; }
-body.dark-mode .badge.text-bg-secondary { background-color: #757575 !important; color: #fff !important; }
-body.dark-mode .badge.text-bg-success   { background-color: #66bb6a !important; color: #fff !important; }
-
-/* -------- ACESSIBILIDADE -------- */
-/* Contraste de texto */
-body.dark-mode {
-    background-color: #121212 !important;
-    color: #e0e0e0 !important;
+body.dark-mode .form-control:focus,
+body.dark-mode .form-select:focus {
+    background-color: #343a40;
+    color: #f8f9fa;
+    border-color: #4dabf7;
+    box-shadow: 0 0 0 0.25rem rgba(77, 171, 247, 0.25);
 }
 
-/* Foco visível */
-:focus {
-    outline: 2px solid #0077cc;
-    outline-offset: 2px;
+/* Ajustes para botões no modo escuro */
+body.dark-mode .btn-primary {
+    background-color: #1a4971;
+    border-color: #153e61;
 }
 
-/* Links com feedback visual */
-a:hover {
-    color: #ff9900;
-    text-decoration: underline;
+body.dark-mode .btn-primary:hover {
+    background-color: #2f6192;
+    border-color: #285480;
 }
 
-/* Melhorias nas mensagens de alerta */
-.alert-dismissible {
-    transition: opacity 0.4s ease, transform 0.4s ease;
-    transform: translateY(0);
+body.dark-mode .btn-outline-secondary {
+    color: #f8f9fa;
+    border-color: #f8f9fa;
 }
 
-.alert-dismissible.fade.show {
-    transform: translateY(-10%);
-    opacity: 0;
+body.dark-mode .btn-outline-secondary:hover {
+    background-color: #495057;
+    color: #f8f9fa;
+}
+
+/* Ajustes para navbar no modo escuro */
+body.dark-mode .navbar-dark {
+    background-color: #1a1f23 !important;
+}
+
+/* Ajustes para footer no modo escuro */
+body.dark-mode .bg-dark {
+    background-color: #1a1f23 !important;
+}
+
+/* Ajustes para tabelas no modo escuro */
+body.dark-mode .table {
+    color: #f8f9fa;
+    background-color: #212529;
+}
+
+body.dark-mode .table-hover tbody tr:hover {
+    background-color: #343a40;
+}
+
+/* Ajustes para badges no modo escuro */
+body.dark-mode .badge {
+    color: #f8f9fa;
+}
+
+/* Ajustes para cards no modo escuro */
+body.dark-mode .card {
+    background-color: #2c3034;
+    color: #f8f9fa;
+}
+
+body.dark-mode .card-header {
+    background-color: #1a1f23;
+}
+
+/* Ajustes para gráficos no modo escuro (Chart.js ou similar) */
+body.dark-mode canvas {
+    background-color: #2c3034; /* Fundo mais claro para os gráficos */
+}
+
+body.dark-mode .chart-legend,
+body.dark-mode .chart-tooltip {
+    color: #f8f9fa !important; /* Legendas e tooltips em texto claro */
+}
+
+body.dark-mode .chart-legend li span {
+    color: #f8f9fa !important; /* Texto das legendas */
+}
+
+body.dark-mode .chart-title {
+    color: #f8f9fa !important; /* Título dos gráficos */
 }
