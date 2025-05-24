@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file
-from models import db, User, Task, Category, Priority, SubTask  # SubTask importado!
+from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file, jsonify
+from models import db, User, Task, Category, Priority, SubTask
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from collections import defaultdict, Counter
@@ -7,38 +7,34 @@ import datetime
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from flask_mail import Mail, Message
 from functools import wraps
+from sqlalchemy import or_
 
-# Novos imports para exportação
+# Imports for export
 from io import BytesIO
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 import pandas as pd
 
 app = Flask(__name__)
-app.secret_key = 'supersecretkey'  # Use uma chave mais segura em produção
+app.secret_key = 'supersecretkey'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Configuração do Flask-Mail (Substitua pelos seus dados reais)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'rharaldmoreirag@gmail.com'  # Substitua pelo seu e-mail
-app.config['MAIL_PASSWORD'] = 'czrc uxli kxet vtwc'  # Substitua pela senha de aplicativo (gerada no Google Account Security -> App passwords)
+app.config['MAIL_USERNAME'] = 'rharaldmoreirag@gmail.com'
+app.config['MAIL_PASSWORD'] = 'czrc uxli kxet vtwc'
 app.config['MAIL_DEFAULT_SENDER'] = 'rharaldmoreirag@gmail.com'
 
-# Inicializar Flask-Mail e Serializer
 mail = Mail(app)
 serializer = URLSafeTimedSerializer(app.secret_key)
 
-# Inicializar o SQLAlchemy com o app
 db.init_app(app)
 
-# Criar as tabelas dentro do contexto da aplicação
 with app.app_context():
     db.create_all()
 
-# Decorator para exigir login
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -48,91 +44,25 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# ------------- EXPORTAÇÃO PDF/EXCEL ----------------
-@app.route('/export/pdf')
-@login_required
-def export_pdf():
-    user_id = session['user_id']
-    tasks = Task.query.filter_by(user_id=user_id).all()
-    buffer = BytesIO()
-    pdf = canvas.Canvas(buffer, pagesize=letter)
-    width, height = letter
-    y = height - 40
-    pdf.setFont("Helvetica-Bold", 16)
-    pdf.drawString(40, y, "Relatório de Tarefas")
-    pdf.setFont("Helvetica", 12)
-    y -= 30
-
-    for task in tasks:
-        pdf.drawString(40, y, f"Título: {task.title}")
-        y -= 18
-        pdf.drawString(60, y, f"Descrição: {task.description or ''}")
-        y -= 18
-        prioridade = task.priority.value if hasattr(task.priority, 'value') else str(task.priority)
-        pdf.drawString(60, y, f"Prioridade: {prioridade.capitalize()}")
-        y -= 18
-        categorias = ', '.join([c.name for c in task.categories]) if task.categories else 'N/A'
-        pdf.drawString(60, y, f"Categorias: {categorias}")
-        y -= 18
-        vencimento = task.due_date.strftime('%d/%m/%Y') if task.due_date else 'N/A'
-        pdf.drawString(60, y, f"Vencimento: {vencimento}")
-        y -= 18
-        status = 'Concluída' if task.completed else 'Pendente'
-        pdf.drawString(60, y, f"Status: {status}")
-        y -= 18
-        # Subtarefas (Checklist)
-        if task.subtasks:
-            pdf.drawString(60, y, "Subtarefas:")
-            y -= 18
-            for sub in task.subtasks:
-                checked = "✔" if sub.completed else "✗"
-                pdf.drawString(80, y, f"[{checked}] {sub.description}")
-                y -= 16
-                if y < 60:
-                    pdf.showPage()
-                    y = height - 40
-        y -= 12
-        if y < 60:
-            pdf.showPage()
-            y = height - 40
-
-    pdf.save()
-    buffer.seek(0)
-    return send_file(buffer, as_attachment=True, download_name="tarefas.pdf", mimetype='application/pdf')
-
-@app.route('/export/excel')
-@login_required
-def export_excel():
-    user_id = session['user_id']
-    tasks = Task.query.filter_by(user_id=user_id).all()
-    data = []
-    for task in tasks:
-        prioridade = task.priority.value if hasattr(task.priority, 'value') else str(task.priority)
-        categorias = ", ".join([c.name for c in task.categories]) if task.categories else ""
-        vencimento = task.due_date.strftime('%d/%m/%Y') if task.due_date else ""
-        status = "Concluída" if task.completed else "Pendente"
-        subtarefas = "\n".join([f"[{'x' if s.completed else ' '}] {s.description}" for s in task.subtasks])
-        data.append({
-            "Título": task.title,
-            "Descrição": task.description or "",
-            "Prioridade": prioridade.capitalize(),
-            "Categorias": categorias,
-            "Vencimento": vencimento,
-            "Status": status,
-            "Subtarefas": subtarefas
-        })
-    df = pd.DataFrame(data)
-    buffer = BytesIO()
-    with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
-        df.to_excel(writer, index=False, sheet_name="Tarefas")
-    buffer.seek(0)
-    return send_file(buffer, as_attachment=True, download_name="tarefas.xlsx", mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-
-# ---------------- ROTAS PADRÃO --------------------
 @app.route('/')
 def index():
     if 'user_id' in session:
-        return redirect(url_for('dashboard'))
+        try:
+            user_id = session['user_id']
+            tasks = Task.query.filter_by(user_id=user_id).all()
+            total_tasks = len(tasks)
+            completed_tasks = sum(1 for task in tasks if task.completed)
+            pending_tasks = total_tasks - completed_tasks
+            recent_tasks = Task.query.filter_by(user_id=user_id).order_by(Task.created_at.desc()).limit(5).all()
+            return render_template('index.html',
+                                 total_tasks=total_tasks,
+                                 completed_tasks=completed_tasks,
+                                 pending_tasks=pending_tasks,
+                                 recent_tasks=recent_tasks,
+                                 now=datetime.datetime.now())
+        except Exception as e:
+            flash(f'Erro ao carregar tarefas: {e}', 'danger')
+            return render_template('index.html')
     return render_template('index.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -166,7 +96,7 @@ def login():
             session['user_id'] = user.id
             session['username'] = user.username
             flash('Login realizado com sucesso!', 'success')
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('index'))  # Redirect to homepage
         else:
             flash('Nome de usuário ou senha inválidos.', 'danger')
     return render_template('login.html')
@@ -179,38 +109,67 @@ def logout():
     flash('Você foi desconectado.', 'info')
     return redirect(url_for('index'))
 
-@app.route('/dashboard', methods=['GET', 'POST'])
+@app.route('/dashboard', methods=['GET'])
 @login_required
 def dashboard():
+    search = request.args.get('search')
+    filter_priority = request.args.get('priority')
+    filter_category = request.args.get('category')
+    filter_status = request.args.get('status')
+    filter_due_date = request.args.get('due_date')
+
     user_id = session['user_id']
     user = User.query.get(user_id)
 
-    # Obter todas as tarefas do usuário
-    user_tasks = Task.query.filter_by(user_id=user_id).all()
+    tasks = Task.query.filter_by(user_id=user_id)
 
-    # Estatísticas de tarefas
-    total_tasks = len(user_tasks)
-    completed_tasks = sum(1 for task in user_tasks if task.completed)
+    if search:
+        tasks = tasks.filter(or_(Task.title.like(f'%{search}%'), Task.description.like(f'%{search}%')))
+
+    if filter_priority and filter_priority != 'all':
+        try:
+            enum_priority = Priority[filter_priority.upper()]
+            tasks = tasks.filter(Task.priority == enum_priority)
+        except KeyError:
+            flash('Prioridade inválida selecionada.', 'warning')
+
+    if filter_category and filter_category != 'all':
+        tasks = tasks.join(Task.categories).filter(Category.name == filter_category)
+
+    if filter_status and filter_status != 'all':
+        if filter_status == 'pending':
+            tasks = tasks.filter(Task.completed == False)
+        elif filter_status == 'completed':
+            tasks = tasks.filter(Task.completed == True)
+
+    if filter_due_date:
+        try:
+            filter_date_obj = datetime.datetime.strptime(filter_due_date, '%Y-%m-%d').date()
+            tasks = tasks.filter(Task.due_date <= filter_due_date)
+        except ValueError:
+            flash('Formato de data inválido.', 'warning')
+
+    tasks = tasks.all()
+
+    total_tasks = len(tasks)
+    completed_tasks = sum(1 for task in tasks if task.completed)
     pending_tasks = total_tasks - completed_tasks
 
-    # Dados para gráfico de prioridade
     priority_counts = defaultdict(int)
-    for task in user_tasks:
+    for task in tasks:
         priority_value = task.priority.value if hasattr(task.priority, 'value') else str(task.priority)
         priority_counts[priority_value] += 1
     priority_labels = [p.value.capitalize() for p in Priority]
     priority_data = [priority_counts[p.value] for p in Priority]
 
-    # Dados para tarefas por categoria
     category_counts = defaultdict(int)
-    for task in user_tasks:
+    for task in tasks:
         for category in task.categories:
             category_counts[category.name] += 1
     category_data = sorted(category_counts.items(), key=lambda item: item[0])
 
-    # Gráfico: tarefas criadas por mês
     tasks_by_month = Counter()
-    for t in user_tasks:
+    for t in tasks:
         if t.created_at:
             key = t.created_at.strftime('%Y-%m')
             tasks_by_month[key] += 1
@@ -218,43 +177,9 @@ def dashboard():
     tasks_per_month_labels = months_sorted
     tasks_per_month_data = [tasks_by_month[m] for m in months_sorted]
 
-    # Gráfico: progresso de subtarefas (checklist)
-    total_subtasks = sum(len(t.subtasks) for t in user_tasks)
-    completed_subtasks = sum([sum(1 for s in t.subtasks if s.completed) for t in user_tasks])
+    total_subtasks = sum(len(t.subtasks) for t in tasks)
+    completed_subtasks = sum([sum(1 for s in t.subtasks if s.completed) for t in tasks])
     pending_subtasks = total_subtasks - completed_subtasks
-
-    # Filtragem de tarefas
-    filter_priority = request.args.get('priority')
-    filter_category = request.args.get('category')
-    filter_status = request.args.get('status')
-    filter_due_date = request.args.get('due_date')
-
-    filtered_tasks = user_tasks
-
-    if filter_priority and filter_priority != 'all':
-        try:
-            enum_priority = Priority[filter_priority.upper()]
-            filtered_tasks = [task for task in filtered_tasks if task.priority == enum_priority]
-        except KeyError:
-            flash('Prioridade inválida selecionada.', 'warning')
-
-    if filter_category and filter_category != 'all':
-        filtered_tasks = [task for task in filtered_tasks if any(cat.name == filter_category for cat in task.categories)]
-
-    if filter_status and filter_status != 'all':
-        if filter_status == 'completed':
-            filtered_tasks = [task for task in filtered_tasks if task.completed]
-        elif filter_status == 'pending':
-            filtered_tasks = [task for task in filtered_tasks if not task.completed]
-
-    if filter_due_date:
-        try:
-            filter_date_obj = datetime.datetime.strptime(filter_due_date, '%Y-%m-%d').date()
-            filtered_tasks = [task for task in filtered_tasks if task.due_date and task.due_date.date() <= filter_date_obj and not task.completed]
-        except ValueError:
-            flash('Formato de data inválido.', 'warning')
-
-    filtered_tasks.sort(key=lambda x: (x.completed, x.due_date if x.due_date else datetime.datetime.max, x.priority.value if hasattr(x.priority, 'value') else str(x.priority)))
 
     all_categories = Category.query.all()
     now = datetime.datetime.now()
@@ -264,7 +189,7 @@ def dashboard():
                            total_tasks=total_tasks,
                            completed_tasks=completed_tasks,
                            pending_tasks=pending_tasks,
-                           tasks=filtered_tasks,
+                           tasks=tasks,
                            all_categories=all_categories,
                            filter_priority=filter_priority,
                            filter_category=filter_category,
@@ -277,8 +202,7 @@ def dashboard():
                            tasks_per_month_labels=tasks_per_month_labels,
                            tasks_per_month_data=tasks_per_month_data,
                            completed_subtasks=completed_subtasks,
-                           pending_subtasks=pending_subtasks
-                           )
+                           pending_subtasks=pending_subtasks)
 
 @app.route('/add_task', methods=['GET', 'POST'])
 @login_required
@@ -306,7 +230,6 @@ def add_task():
         new_task = Task(title=title, description=description,
                         user_id=user_id, priority=priority, due_date=due_date)
 
-        # Adicionar categorias
         if category_names_str:
             category_names = [name.strip() for name in category_names_str.split(',') if name.strip()]
             for cat_name in category_names:
@@ -324,7 +247,6 @@ def add_task():
             flash(f'Erro ao adicionar tarefa: {e}', 'danger')
             return redirect(url_for('add_task'))
 
-        # ADICIONAR SUBTAREFAS (Checklist)
         subtask_descriptions = request.form.getlist('subtask_description[]')
         for desc in subtask_descriptions:
             if desc.strip():
@@ -339,6 +261,49 @@ def add_task():
 
         return redirect(url_for('dashboard'))
     return render_template('add_task.html', all_categories=all_categories)
+
+@app.route('/search_tasks', methods=['GET'])
+@login_required
+def search_tasks():
+    search = request.args.get('search')
+    filter_priority = request.args.get('priority')
+    filter_category = request.args.get('category')
+    filter_status = request.args.get('status')
+    filter_due_date = request.args.get('due_date')
+
+    user_id = session['user_id']
+    tasks = Task.query.filter_by(user_id=user_id)
+
+    if search:
+        tasks = tasks.filter(or_(Task.title.like(f'%{search}%'), Task.description.like(f'%{search}%')))
+
+    if filter_priority and filter_priority != 'all':
+        try:
+            enum_priority = Priority[filter_priority.upper()]
+            tasks = tasks.filter(Task.priority == enum_priority)
+        except KeyError:
+            flash('Prioridade inválida selecionada.', 'warning')
+
+    if filter_category and filter_category != 'all':
+        tasks = tasks.join(Task.categories).filter(Category.name == filter_category)
+
+    if filter_status and filter_status != 'all':
+        if filter_status == 'pending':
+            tasks = tasks.filter(Task.completed == False)
+        elif filter_status == 'completed':
+            tasks = tasks.filter(Task.completed == True)
+
+    if filter_due_date:
+        try:
+            filter_date_obj = datetime.datetime.strptime(filter_due_date, '%Y-%m-%d').date()
+            tasks = tasks.filter(Task.due_date <= filter_due_date)
+        except ValueError:
+            flash('Formato de data inválido.', 'warning')
+
+    tasks = tasks.all()
+    now = datetime.datetime.now()
+
+    return render_template('tasks.html', tasks=tasks, now=now)
 
 @app.route('/edit_task/<int:task_id>', methods=['GET', 'POST'])
 @login_required
@@ -366,7 +331,6 @@ def edit_task(task_id):
 
         task.completed = 'completed' in request.form
 
-        # Atualizar categorias
         category_names_str = request.form.get('categories')
         task.categories.clear()
         if category_names_str:
@@ -378,7 +342,6 @@ def edit_task(task_id):
                     db.session.add(category)
                 task.categories.append(category)
 
-        # ATUALIZAR SUBTAREFAS (remove todas e adiciona as atuais)
         SubTask.query.filter_by(task_id=task.id).delete()
         subtask_descriptions = request.form.getlist('subtask_description[]')
         subtask_completeds = request.form.getlist('subtask_completed[]')
@@ -403,14 +366,20 @@ def toggle_subtask(subtask_id):
     sub = SubTask.query.get_or_404(subtask_id)
     task = Task.query.get(sub.task_id)
     if task.user_id != session['user_id']:
+        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'error': 'Você não tem permissão para modificar esta subtarefa.'}), 403
         flash('Você não tem permissão para modificar esta subtarefa.', 'danger')
         return redirect(url_for('dashboard'))
     sub.completed = not sub.completed
     try:
         db.session.commit()
+        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': 'Checklist atualizado!'}), 200
         flash('Checklist atualizado!', 'success')
     except Exception as e:
         db.session.rollback()
+        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'error': f'Erro ao atualizar subtarefa: {e}'}), 500
         flash(f'Erro ao atualizar subtarefa: {e}', 'danger')
     return redirect(url_for('dashboard'))
 
@@ -419,14 +388,20 @@ def toggle_subtask(subtask_id):
 def delete_task(task_id):
     task = Task.query.get_or_404(task_id)
     if task.user_id != session['user_id']:
+        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'error': 'Você não tem permissão para excluir esta tarefa.'}), 403
         flash('Você não tem permissão para excluir esta tarefa.', 'danger')
         return redirect(url_for('dashboard'))
     try:
         db.session.delete(task)
         db.session.commit()
+        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': 'Tarefa excluída com sucesso!'}), 200
         flash('Tarefa excluída com sucesso!', 'success')
     except Exception as e:
         db.session.rollback()
+        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'error': f'Erro ao excluir tarefa: {e}'}), 500
         flash(f'Erro ao excluir tarefa: {e}', 'danger')
     return redirect(url_for('dashboard'))
 
@@ -435,14 +410,20 @@ def delete_task(task_id):
 def complete_task(task_id):
     task = Task.query.get_or_404(task_id)
     if task.user_id != session['user_id']:
+        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'error': 'Você não tem permissão para modificar esta tarefa.'}), 403
         flash('Você não tem permissão para modificar esta tarefa.', 'danger')
         return redirect(url_for('dashboard'))
     task.completed = not task.completed
     try:
         db.session.commit()
+        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': 'Status da tarefa atualizado!'}), 200
         flash('Status da tarefa atualizado!', 'success')
     except Exception as e:
         db.session.rollback()
+        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'error': f'Erro ao atualizar status: {e}'}), 500
         flash(f'Erro ao atualizar status: {e}', 'danger')
     return redirect(url_for('dashboard'))
 
@@ -532,6 +513,84 @@ def reset_password(token):
             flash(f'Erro ao redefinir senha: {e}', 'danger')
         return redirect(url_for('login'))
     return render_template('reset_password.html', token=token)
+
+@app.route('/export/pdf')
+@login_required
+def export_pdf():
+    user_id = session['user_id']
+    tasks = Task.query.filter_by(user_id=user_id).all()
+    buffer = BytesIO()
+    pdf = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+    y = height - 40
+    pdf.setFont("Helvetica-Bold", 16)
+    pdf.drawString(40, y, "Relatório de Tarefas")
+    pdf.setFont("Helvetica", 12)
+    y -= 30
+
+    for task in tasks:
+        pdf.drawString(40, y, f"Título: {task.title}")
+        y -= 18
+        pdf.drawString(60, y, f"Descrição: {task.description or ''}")
+        y -= 18
+        prioridade = task.priority.value if hasattr(task.priority, 'value') else str(task.priority)
+        pdf.drawString(60, y, f"Prioridade: {prioridade.capitalize()}")
+        y -= 18
+        categorias = ', '.join([c.name for c in task.categories]) if task.categories else 'N/A'
+        pdf.drawString(60, y, f"Categorias: {categorias}")
+        y -= 18
+        vencimento = task.due_date.strftime('%d/%m/%Y') if task.due_date else 'N/A'
+        pdf.drawString(60, y, f"Vencimento: {vencimento}")
+        y -= 18
+        status = 'Concluída' if task.completed else 'Pendente'
+        pdf.drawString(60, y, f"Status: {status}")
+        y -= 18
+        if task.subtasks:
+            pdf.drawString(60, y, "Subtarefas:")
+            y -= 18
+            for sub in task.subtasks:
+                checked = "" if sub.completed else ""
+                pdf.drawString(80, y, f"[{checked}] {sub.description}")
+                y -= 16
+                if y < 60:
+                    pdf.showPage()
+                    y = height - 40
+        y -= 12
+        if y < 60:
+            pdf.showPage()
+            y = height - 40
+
+    pdf.save()
+    buffer.seek(0)
+    return send_file(buffer, as_attachment=True, download_name="tarefas.pdf", mimetype='application/pdf')
+
+@app.route('/export/excel')
+@login_required
+def export_excel():
+    user_id = session['user_id']
+    tasks = Task.query.filter_by(user_id=user_id).all()
+    data = []
+    for task in tasks:
+        prioridade = task.priority.value if hasattr(task.priority, 'value') else str(task.priority)
+        categorias = ", ".join([c.name for c in task.categories]) if task.categories else ""
+        vencimento = task.due_date.strftime('%d/%m/%Y') if task.due_date else ""
+        status = "Concluída" if task.completed else "Pendente"
+        subtarefas = "\n".join([f"[{'x' if s.completed else ' '}] {s.description}" for s in task.subtasks])
+        data.append({
+            "Título": task.title,
+            "Descrição": task.description or "",
+            "Prioridade": prioridade.capitalize(),
+            "Categorias": categorias,
+            "Vencimento": vencimento,
+            "Status": status,
+            "Subtarefas": subtarefas
+        })
+    df = pd.DataFrame(data)
+    buffer = BytesIO()
+    with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+        df.to_excel(writer, index=False, sheet_name="Tarefas")
+    buffer.seek(0)
+    return send_file(buffer, as_attachment=True, download_name="tarefas.xlsx", mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
 if __name__ == '__main__':
     app.run(debug=True)

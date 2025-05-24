@@ -154,3 +154,34 @@ label {
     background-color: #0a58ca;
     color: #ffffff;
 }
+/* Homepage Styles */
+.card-header-success {
+    background-color: var(--chart-bg-color-1-light);
+    color: var(--meu-card-header-text-color);
+}
+[data-bs-theme="dark"] .card-header-success {
+    background-color: var(--chart-bg-color-1-dark);
+}
+
+.card-header-warning {
+    background-color: var(--chart-bg-color-2-light);
+    color: var(--meu-card-header-text-color);
+}
+[data-bs-theme="dark"] .card-header-warning {
+    background-color: var(--chart-bg-color-2-dark);
+}
+
+.card.h-100 {
+    transition: transform 0.3s ease;
+}
+.card.h-100:hover {
+    transform: translateY(-5px);
+}
+
+.display-3 {
+    font-weight: 700;
+}
+
+.bi-check-circle-fill, .bi-bar-chart-fill, .bi-moon-fill {
+    color: var(--meu-link-color);
+}

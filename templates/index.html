@@ -1,10 +1,166 @@
 {% extends 'base.html' %}
-{% block title %}Bem-vindo{% endblock %}
+{% block title %}Início - Task Manager{% endblock %}
+
 {% block content %}
-<div class="text-center py-5">
-    <h1 class="display-4 mb-3">Bem-vindo ao Task Manager!</h1>
-    <p class="lead">Gerencie suas tarefas com facilidade, organize sua vida e aumente sua produtividade.</p>
-    <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg mt-4">Comece agora!</a>
-    <p class="mt-3"><a href="{{ url_for('login') }}">Já tem uma conta? Faça login</a></p>
+<div class="container py-5">
+    {% if session.get('user_id') %}
+        <!-- Authenticated User Section -->
+        <div class="text-center mb-5">
+            <h1 class="display-4">Bem-vindo, {{ session.get('username') }}!</h1>
+            <p class="lead">Aqui está um resumo das suas tarefas. Acesse o <a href="{{ url_for('dashboard') }}">painel completo</a> para mais detalhes.</p>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-header card-header-primary">Total de Tarefas</div>
+                    <div class="card-body">
+                        <h3>{{ total_tasks }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-header card-header-success">Tarefas Concluídas</div>
+                    <div class="card-body">
+                        <h3>{{ completed_tasks }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-header card-header-warning">Tarefas Pendentes</div>
+                    <div class="card-body">
+                        <h3>{{ pending_tasks }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Tasks -->
+        <h2 class="mb-4">Tarefas Recentes</h2>
+        {% if recent_tasks %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Prioridade</th>
+                            <th>Vencimento</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in recent_tasks %}
+                        <tr class="{% if task.completed %}table-success{% elif task.due_date and task.due_date < now and not task.completed %}border-danger border-2{% endif %}">
+                            <td class="{{ 'text-decoration-line-through' if task.completed }}">{{ task.title }}</td>
+                            <td>
+                                {% if task.priority.value == 'high' %}
+                                    <span class="badge text-bg-danger">Alta</span>
+                                {% elif task.priority.value == 'medium' %}
+                                    <span class="badge text-bg-warning">Média</span>
+                                {% else %}
+                                    <span class="badge text-bg-info">Baixa</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if task.due_date %}
+                                    {{ task.due_date.strftime('%d/%m/%Y') }}
+                                    {% if not task.completed and task.due_date < now %}
+                                        <span class="badge text-bg-danger ms-1">Atrasada!</span>
+                                    {% endif %}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if task.completed %}
+                                    <span class="badge text-bg-success">Concluída</span>
+                                {% else %}
+                                    <span class="badge text-bg-warning">Pendente</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('edit_task', task_id=task.id) }}" class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form action="{{ url_for('complete_task', task_id=task.id) }}" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm {% if task.completed %}btn-outline-warning{% else %}btn-outline-success{% endif %} me-1" title="{% if task.completed %}Desfazer{% else %}Concluir{% endif %}">
+                                        <i class="bi {% if task.completed %}bi-arrow-counterclockwise{% else %}bi-check-lg{% endif %}"></i>
+                                    </button>
+                                </form>
+                                <form action="{{ url_for('delete_task', task_id=task.id) }}" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir esta tarefa?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary mt-3">Ver Todas as Tarefas</a>
+        {% else %}
+            <p class="text-center text-muted">Nenhuma tarefa recente. <a href="{{ url_for('add_task') }}">Adicione uma tarefa</a> para começar!</p>
+        {% endif %}
+    {% else %}
+        <!-- Unauthenticated User Section -->
+        <div class="text-center mb-5">
+            <h1 class="display-3">Bem-vindo ao Task Manager</h1>
+            <p class="lead">Organize suas tarefas de forma simples e eficiente!</p>
+            <div class="mt-4">
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg me-2">Entrar</a>
+                <a href="{{ url_for('register') }}" class="btn btn-outline-primary btn-lg">Cadastrar</a>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-check-circle-fill text-primary display-4 mb-3"></i>
+                        <h5 class="card-title">Gerenciamento de Tarefas</h5>
+                        <p class="card-text">Crie, edite e acompanhe suas tarefas com facilidade, incluindo subtarefas e prioridades.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-bar-chart-fill text-primary display-4 mb-3"></i>
+                        <h5 class="card-title">Estatísticas Visuais</h5>
+                        <p class="card-text">Visualize seu progresso com gráficos interativos e exporte relatórios em PDF ou Excel.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-moon-fill text-primary display-4 mb-3"></i>
+                        <h5 class="card-title">Tema Personalizável</h5>
+                        <p class="card-text">Escolha entre modo claro e escuro para uma experiência confortável em qualquer ambiente.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="text-center">
+            <h2 class="mb-4">Pronto para organizar sua vida?</h2>
+            <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">Comece Agora</a>
+        </div>
+    {% endif %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // Initialize Bootstrap tooltips
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+</script>
 {% endblock %}

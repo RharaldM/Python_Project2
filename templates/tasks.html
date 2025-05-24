@@ -1,43 +1,97 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Teste Categoria com Botão Fechar</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-<style>
-.category-tag {
-    position: relative;
-    padding-right: 25px !important;
-    display: inline-flex;
-    align-items: center;
-    background-color: #eee;
-    border-radius: 5px;
-    padding: 5px 10px;
-    margin-right: 5px;
-}
-
-.category-tag .btn-close {
-    margin-left: 8px;
-    opacity: 0.8;
-    width: 1em;
-    height: 1em;
-    cursor: pointer;
-    position: relative;
-}
-
-.category-tag .btn-close:hover {
-    opacity: 1;
-}
-</style>
-</head>
-<body>
-
-<span class="category-tag">
-  Categoria 1
-  <button type="button" class="btn-close" aria-label="Close"></button>
-</span>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+{% if tasks %}
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Título</th>
+                    <th scope="col">Prioridade</th>
+                    <th scope="col">Categorias</th>
+                    <th scope="col">Vencimento</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr class="
+                    {% if task.completed %}table-success{% else %}
+                        {% if task.due_date and task.due_date < now and not task.completed %} border-danger border-2
+                        {% elif task.due_date and (task.due_date - now).days <= 2 and not task.completed %} table-warning
+                        {% endif %}
+                    {% endif %}
+                ">
+                    <td class="{{ 'text-decoration-line-through' if task.completed }}">
+                        {{ task.title }}
+                        {% if task.subtasks %}
+                            <ul class="list-group mt-2">
+                            {% for sub in task.subtasks %}
+                                <li class="list-group-item py-1">
+                                    <form method="post" action="{{ url_for('toggle_subtask', subtask_id=sub.id) }}" style="display:inline;">
+                                        <input type="checkbox" name="completed" onchange="this.form.submit()" {% if sub.completed %}checked{% endif %} />
+                                    </form>
+                                    <span class="{% if sub.completed %}text-decoration-line-through text-success{% endif %}">
+                                        {{ sub.description }}
+                                    </span>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if task.priority.value == 'high' %}
+                            <span class="badge text-bg-danger">Alta</span>
+                        {% elif task.priority.value == 'medium' %}
+                            <span class="badge text-bg-warning">Média</span>
+                        {% else %}
+                            <span class="badge text-bg-info">Baixa</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if task.categories %}
+                            {% for category in task.categories %}
+                                <span class="badge text-bg-secondary me-1">{{ category.name }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="text-muted">N/A</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if task.due_date %}
+                            {{ task.due_date.strftime('%d/%m/%Y') }}
+                            {% if not task.completed and task.due_date < now %}
+                                <span class="badge text-bg-danger ms-1">Atrasada!</span>
+                            {% endif %}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if task.completed %}
+                            <span class="badge text-bg-success">Concluída</span>
+                        {% else %}
+                            <span class="badge text-bg-warning">Pendente</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('edit_task', task_id=task.id) }}" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <form action="{{ url_for('complete_task', task_id=task.id) }}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm {% if task.completed %}btn-outline-warning{% else %}btn-outline-success{% endif %} me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{% if task.completed %}Desfazer{% else %}Concluir{% endif %}">
+                                <i class="bi {% if task.completed %}bi-arrow-counterclockwise{% else %}bi-check-lg{% endif %}"></i>
+                            </button>
+                        </form>
+                        <form action="{{ url_for('delete_task', task_id=task.id) }}" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir esta tarefa?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Excluir">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <p class="text-center text-muted">Nenhuma tarefa encontrada.</p>
+{% endif %}
