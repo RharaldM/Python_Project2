@@ -1,54 +1,35 @@
 document.addEventListener('DOMContentLoaded', function() {
     const checklistContainer = document.getElementById('checklist-container');
-    const addSubtaskBtn = document.getElementById('add-subtask');
+    const addSubtaskBtn = document.getElementById('add-subtask-btn');
 
     if (!checklistContainer || !addSubtaskBtn) return;
 
-    function createChecklistItem(description = '', completed = false) {
-        const div = document.createElement('div');
-        div.className = 'input-group mb-2 checklist-item';
+    let subtaskCounter = 0;
+
+    function createChecklistItem() {
+        subtaskCounter++;
+        const subtaskDiv = document.createElement('div');
+        subtaskDiv.className = 'input-group mb-2';
 
         const input = document.createElement('input');
         input.type = 'text';
-        input.className = 'form-control';
-        input.name = 'subtask_description[]';
-        input.placeholder = 'Digite uma subtarefa';
-        input.required = true;
-        input.value = description;
-
-        div.appendChild(input);
-
-        // Opcional: adicionar checkbox para marcar como concluída na edição
-        if (window.location.href.includes('edit_task')) {
-            const groupText = document.createElement('div');
-            groupText.className = 'input-group-text';
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.className = 'form-check-input mt-0';
-            checkbox.name = 'subtask_completed[]';
-            checkbox.value = checklistContainer.childElementCount;
-            if (completed) checkbox.checked = true;
-            groupText.appendChild(checkbox);
-            div.appendChild(groupText);
-        }
-
+        input.className = 'form-control form-control-sm';
+        input.name = `subtask_description_${subtaskCounter}`;
+        input.placeholder = `Subtarefa ${subtaskCounter}`;
+        
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
-        removeBtn.className = 'btn btn-outline-danger remove-subtask';
-        removeBtn.innerHTML = '&times;';
+        removeBtn.className = 'btn btn-outline-danger btn-sm';
+        removeBtn.textContent = 'Remover';
         removeBtn.onclick = function() {
-            div.remove();
+            subtaskDiv.remove();
         };
-        div.appendChild(removeBtn);
 
-        return div;
+        subtaskDiv.appendChild(input);
+        subtaskDiv.appendChild(removeBtn);
+        checklistContainer.appendChild(subtaskDiv);
+        input.focus();
     }
 
-    addSubtaskBtn.onclick = function() {
-        checklistContainer.appendChild(createChecklistItem());
-    };
-
-    // Eventos para remover já são delegados nos botões
-
-    // Se não estamos editando, não há subtarefas já carregadas
+    addSubtaskBtn.addEventListener('click', createChecklistItem);
 });
