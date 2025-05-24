@@ -10,7 +10,9 @@
 </div>
 
 <div class="card mb-4 shadow-sm">
-    <div class="card-header bg-primary text-white">
+    <!-- ATENÇÃO: bg-primary text-white FORÇA cores fixas. Para adaptar ao tema, remova essas classes
+         e estilize .card-header no style.css usando suas variáveis CSS. -->
+    <div class="card-header {% if not (request.args.get('theme') == 'dark') %}bg-primary text-white{% endif %}"> 
         <h3 class="h5 mb-0">Estatísticas de Tarefas</h3>
     </div>
     <div class="card-body">
@@ -19,7 +21,7 @@
                 <div class="card text-center h-100">
                     <div class="card-body">
                         <h5 class="card-title">Total de Tarefas</h5>
-                        <p class="card-text display-6">{{ total_tasks }}</p>
+                        <p class="card-text display-6">{{ total_tasks | default(0) }}</p>
                     </div>
                 </div>
             </div>
@@ -27,7 +29,7 @@
                 <div class="card text-center h-100">
                     <div class="card-body">
                         <h5 class="card-title">Tarefas Concluídas</h5>
-                        <p class="card-text display-6 text-success">{{ completed_tasks }}</p>
+                        <p class="card-text display-6 text-success">{{ completed_tasks | default(0) }}</p>
                     </div>
                 </div>
             </div>
@@ -35,7 +37,7 @@
                 <div class="card text-center h-100">
                     <div class="card-body">
                         <h5 class="card-title">Tarefas Pendentes</h5>
-                        <p class="card-text display-6 text-warning">{{ pending_tasks }}</p>
+                        <p class="card-text display-6 text-warning">{{ pending_tasks | default(0) }}</p>
                     </div>
                 </div>
             </div>
@@ -47,7 +49,7 @@
 <div class="row mb-4">
     <div class="col-md-6">
         <div class="card shadow-sm h-100">
-            <div class="card-header bg-secondary text-white">
+            <div class="card-header {% if not (request.args.get('theme') == 'dark') %}bg-secondary text-white{% endif %}">
                 <h3 class="h5 mb-0">Tarefas criadas por mês</h3>
             </div>
             <div class="card-body d-flex justify-content-center align-items-center">
@@ -57,7 +59,7 @@
     </div>
     <div class="col-md-6">
         <div class="card shadow-sm h-100">
-            <div class="card-header bg-secondary text-white">
+            <div class="card-header {% if not (request.args.get('theme') == 'dark') %}bg-secondary text-white{% endif %}">
                 <h3 class="h5 mb-0">Progresso dos Checklists</h3>
             </div>
             <div class="card-body d-flex justify-content-center align-items-center">
@@ -70,7 +72,7 @@
 <div class="row mb-4">
     <div class="col-md-6">
         <div class="card shadow-sm h-100">
-            <div class="card-header bg-info text-white">
+            <div class="card-header {% if not (request.args.get('theme') == 'dark') %}bg-info text-white{% endif %}">
                 <h3 class="h5 mb-0">Progresso Geral</h3>
             </div>
             <div class="card-body d-flex justify-content-center align-items-center">
@@ -80,7 +82,7 @@
     </div>
     <div class="col-md-6">
         <div class="card shadow-sm h-100">
-            <div class="card-header bg-success text-white">
+            <div class="card-header {% if not (request.args.get('theme') == 'dark') %}bg-success text-white{% endif %}">
                 <h3 class="h5 mb-0">Tarefas por Prioridade</h3>
             </div>
             <div class="card-body d-flex justify-content-center align-items-center">
@@ -91,7 +93,7 @@
 </div>
 
 <div class="card mb-4 shadow-sm">
-    <div class="card-header bg-dark text-white">
+    <div class="card-header {% if not (request.args.get('theme') == 'dark') %}bg-dark text-white{% else %}bg-light text-dark{% endif %}">
         <h3 class="h5 mb-0">Minhas Tarefas</h3>
     </div>
     <div class="card-body">
@@ -241,7 +243,7 @@
 <div class="row mb-4">
     <div class="col-md-6">
         <div class="card shadow-sm h-100">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header {% if not (request.args.get('theme') == 'dark') %}bg-primary text-white{% endif %}">
                 <h3 class="h5 mb-0">Tarefas por Categoria</h3>
             </div>
             <div class="card-body d-flex justify-content-center align-items-center">
@@ -250,232 +252,257 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+// Função getThemeColors MODIFICADA e MAIS ROBUSTA
 function getThemeColors() {
-    const theme = document.body.getAttribute('data-bs-theme') || 'light';
-    if (theme === 'dark') {
-        return {
-            bg: ['#198754', '#ffc107', '#0dcaf0', '#6c757d', '#dc3545', '#212529'],
-            font: '#fff',
-            grid: '#343a40'
-        };
-    } else {
-        return {
-            bg: ['#28a745', '#ffc107', '#17a2b8', '#adb5bd', '#dc3545', '#f8f9fa'],
-            font: '#212529',
-            grid: '#dee2e6'
+    if (typeof window === 'undefined' || !document.documentElement || !document.body) {
+        console.warn("DOM não totalmente pronto para getThemeColors ou ambiente não-browser.");
+        return { // Fallback muito básico para evitar quebrar tudo
+            bg: ['#CCCCCC', '#BBBBBB', '#AAAAAA', '#999999', '#888888', '#777777'],
+            font: '#000000',
+            grid: '#DDDDDD'
         };
     }
+
+    const style = getComputedStyle(document.documentElement);
+    const currentTheme = document.body.getAttribute('data-bs-theme') || 'light';
+    // console.log("[getThemeColors] Tema atual:", currentTheme);
+
+    function getCssVar(varName, fallbackColor) {
+        const value = style.getPropertyValue(varName).trim();
+        // console.log(`[getCssVar] Lendo '${varName}': '${value}' (Fallback: '${fallbackColor}')`);
+        if (!value) {
+            // console.warn(`[getCssVar] Variável CSS '${varName}' não encontrada ou vazia. Usando fallback: '${fallbackColor}'`);
+        }
+        return value || fallbackColor;
+    }
+
+    let colors;
+    if (currentTheme === 'dark') {
+        colors = {
+            bg: [
+                getCssVar('--chart-bg-color-1-dark', '#198754'), // Verde escuro
+                getCssVar('--chart-bg-color-2-dark', '#b28900'), // Amarelo escuro (ajustado para contraste)
+                getCssVar('--chart-bg-color-3-dark', '#0a95a7'), // Ciano escuro
+                getCssVar('--chart-bg-color-4-dark', '#5a6268'), // Cinza escuro
+                getCssVar('--chart-bg-color-5-dark', '#b02a37'), // Vermelho escuro
+                getCssVar('--chart-bg-color-6-dark', '#212529')  // Fundo body escuro
+            ],
+            font: getCssVar('--chart-font-color-dark', '#f8f9fa'),
+            grid: getCssVar('--chart-grid-color-dark', '#495057'), // Um cinza para grid
+            chartBorder: getCssVar('--meu-card-bg-color', '#2b3035') // Cor de fundo do card para bordas de pizza/rosca
+        };
+    } else { // light theme
+        colors = {
+            bg: [
+                getCssVar('--chart-bg-color-1-light', '#28a745'), // Verde
+                getCssVar('--chart-bg-color-2-light', '#ffc107'), // Amarelo
+                getCssVar('--chart-bg-color-3-light', '#17a2b8'), // Ciano
+                getCssVar('--chart-bg-color-4-light', '#adb5bd'), // Cinza
+                getCssVar('--chart-bg-color-5-light', '#dc3545'), // Vermelho
+                getCssVar('--chart-bg-color-6-light', '#f8f9fa')  // Fundo body claro
+            ],
+            font: getCssVar('--chart-font-color-light', '#212529'),
+            grid: getCssVar('--chart-grid-color-light', '#dee2e6'),
+            chartBorder: getCssVar('--meu-card-bg-color', '#ffffff') // Fundo do card branco para bordas
+        };
+    }
+    // console.log("[getThemeColors] Cores retornadas:", colors);
+    return colors;
 }
 
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Gráfico de Progresso Geral
-    const progressCtx = document.getElementById('progressChart').getContext('2d');
-    const progressChart = new Chart(progressCtx, {
-        type: 'pie',
-        data: {
-            labels: ['Concluídas', 'Pendentes'],
-            datasets: [{
-                data: [{{ completed_tasks | default(0) }}, {{ pending_tasks | default(0) }}],
-                backgroundColor: [getThemeColors().bg[0], getThemeColors().bg[1]],
-                borderColor: ['#ffffff', '#ffffff'],
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'bottom', labels: { color: getThemeColors().font } },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.label || '';
-                            let value = context.parsed || 0;
-                            let total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            let percentage = total ? ((value / total) * 100).toFixed(1) : 0;
-                            return `${label}: ${value} (${percentage}%)`;
-                        }
+    console.log("Dashboard script: DOMContentLoaded disparado.");
+
+    // Inicializa variáveis de gráfico
+    let progressChart, priorityChart, categoryChart, tasksPerMonthChart, subtasksProgressChart;
+    
+    // Tenta inicializar os gráficos
+    try {
+        console.log("Tentando inicializar gráficos...");
+        const initialThemeColors = getThemeColors(); // Pega cores no carregamento
+
+        if (document.getElementById('progressChart')) {
+            try {
+                const progressCtx = document.getElementById('progressChart').getContext('2d');
+                progressChart = new Chart(progressCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Concluídas', 'Pendentes'],
+                        datasets: [{
+                            data: [{{ completed_tasks | default(0) }}, {{ pending_tasks | default(0) }}],
+                            backgroundColor: [initialThemeColors.bg[0], initialThemeColors.bg[1]],
+                            borderColor: initialThemeColors.chartBorder,
+                            borderWidth: 2
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+                });
+                console.log("Progress chart inicializado.");
+            } catch (e) { console.error("Erro ao inicializar progressChart:", e); }
+        } else { console.log("Elemento progressChart não encontrado."); }
+
+        if (document.getElementById('priorityChart')) {
+            try {
+                const priorityCtx = document.getElementById('priorityChart').getContext('2d');
+                priorityChart = new Chart(priorityCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: {{ priority_labels | default([]) | tojson }},
+                        datasets: [{
+                            label: 'Número de Tarefas',
+                            data: {{ priority_data | default([]) | tojson }},
+                            backgroundColor: [initialThemeColors.bg[0], initialThemeColors.bg[1], initialThemeColors.bg[2]],
+                            borderColor: [initialThemeColors.bg[0], initialThemeColors.bg[1], initialThemeColors.bg[2]],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: 'Tarefas por Prioridade' } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+                });
+                console.log("Priority chart inicializado.");
+            } catch (e) { console.error("Erro ao inicializar priorityChart:", e); }
+        } else { console.log("Elemento priorityChart não encontrado."); }
+        
+        if (document.getElementById('categoryChart')) {
+            try {
+                const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+                const categoryLabels = {{ category_data | map(attribute=0) | list | default([]) | tojson }};
+                const categoryCounts = {{ category_data | map(attribute=1) | list | default([]) | tojson }};
+                
+                function generateCategoryColors(numColors, theme) {
+                    const colors = [];
+                    const baseHues = [210, 30, 120, 270, 60, 180, 0, 300, 90, 240];
+                    const saturation = 70;
+                    const lightness = (theme === 'dark') ? 65 : 55;
+                    for (let i = 0; i < numColors; i++) {
+                        const hue = baseHues[i % baseHues.length] + Math.floor(i / baseHues.length) * 20; // Ajuste na variação do hue
+                        colors.push(`hsl(${hue % 360}, ${saturation}%, ${lightness}%)`);
                     }
+                    return colors;
                 }
-            }
-        }
-    });
+                const initialCategoryBgColors = generateCategoryColors(categoryLabels.length, document.body.getAttribute('data-bs-theme') || 'light');
 
-    // Gráfico de Prioridade
-    const priorityCtx = document.getElementById('priorityChart').getContext('2d');
-    const priorityChart = new Chart(priorityCtx, {
-        type: 'bar',
-        data: {
-            labels: {{ priority_labels | tojson }},
-            datasets: [{
-                label: 'Número de Tarefas',
-                data: {{ priority_data | tojson }},
-                backgroundColor: [
-                    getThemeColors().bg[0],
-                    getThemeColors().bg[1],
-                    getThemeColors().bg[2]
-                ],
-                borderColor: [
-                    getThemeColors().bg[0],
-                    getThemeColors().bg[1],
-                    getThemeColors().bg[2]
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false, labels: { color: getThemeColors().font } },
-                title: { display: true, text: 'Tarefas por Prioridade', color: getThemeColors().font }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { precision: 0, color: getThemeColors().font },
-                    grid: { color: getThemeColors().grid }
-                },
-                x: {
-                    ticks: { color: getThemeColors().font },
-                    grid: { color: getThemeColors().grid }
-                }
-            }
-        }
-    });
+                categoryChart = new Chart(categoryCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: categoryLabels,
+                        datasets: [{
+                            data: categoryCounts,
+                            backgroundColor: initialCategoryBgColors,
+                            borderColor: initialThemeColors.chartBorder,
+                            borderWidth: 2,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Tarefas por Categoria' } } }
+                });
+                console.log("Category chart inicializado.");
+            } catch (e) { console.error("Erro ao inicializar categoryChart:", e); }
+        } else { console.log("Elemento categoryChart não encontrado."); }
 
-    // Gráfico de Categorias (Pie Chart)
-    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-    const categoryLabels = {{ category_data | map(attribute=0) | list | tojson }};
-    const categoryCounts = {{ category_data | map(attribute=1) | list | tojson }};
-    function generateColors(numColors) {
-        const colors = [];
-        for (let i = 0; i < numColors; i++) {
-            const hue = (i * 137.508) % 360;
-            colors.push(`hsl(${hue}, 70%, 60%)`);
-        }
-        return colors;
+        if (document.getElementById('tasksPerMonthChart')) {
+            try {
+                const tasksPerMonthCtx = document.getElementById('tasksPerMonthChart').getContext('2d');
+                tasksPerMonthChart = new Chart(tasksPerMonthCtx, {
+                    type: 'line',
+                    data: {
+                        labels: {{ tasks_per_month_labels | default([]) | tojson }},
+                        datasets: [{
+                            label: 'Tarefas criadas',
+                            data: {{ tasks_per_month_data | default([]) | tojson }},
+                            fill: true,
+                            borderColor: initialThemeColors.bg[0],
+                            backgroundColor: initialThemeColors.bg[0] + '4D', // Usando '4D' para ~30% opacidade
+                            pointBackgroundColor: initialThemeColors.bg[0],
+                            tension: 0.1
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+                });
+                console.log("TasksPerMonth chart inicializado.");
+            } catch (e) { console.error("Erro ao inicializar tasksPerMonthChart:", e); }
+        } else { console.log("Elemento tasksPerMonthChart não encontrado."); }
+
+        if (document.getElementById('subtasksProgressChart')) {
+            try {
+                const subtasksProgressCtx = document.getElementById('subtasksProgressChart').getContext('2d');
+                subtasksProgressChart = new Chart(subtasksProgressCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Concluídas', 'Pendentes'],
+                        datasets: [{
+                            data: [{{ completed_subtasks|default(0) }}, {{ pending_subtasks|default(0) }}],
+                            backgroundColor: [initialThemeColors.bg[0], initialThemeColors.bg[1]],
+                            borderColor: initialThemeColors.chartBorder,
+                            borderWidth: 2
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+                });
+                console.log("SubtasksProgress chart inicializado.");
+            } catch (e) { console.error("Erro ao inicializar subtasksProgressChart:", e); }
+        } else { console.log("Elemento subtasksProgressChart não encontrado."); }
+
+    } catch (err) {
+        console.error("Erro GERAL durante a inicialização dos gráficos:", err);
     }
-    const backgroundColors = generateColors(categoryLabels.length);
-    const categoryChart = new Chart(categoryCtx, {
-        type: 'pie',
-        data: {
-            labels: categoryLabels,
-            datasets: [{
-                data: categoryCounts,
-                backgroundColor: backgroundColors,
-                hoverOffset: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'bottom', labels: { color: getThemeColors().font } },
-                title: { display: true, text: 'Tarefas por Categoria', color: getThemeColors().font },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.label || '';
-                            let value = context.parsed || 0;
-                            let total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            let percentage = total ? ((value / total) * 100).toFixed(1) : 0;
-                            return `${label}: ${value} (${percentage}%)`;
-                        }
-                    }
-                }
-            }
-        }
-    });
 
-    // Gráfico de tarefas por mês
-    const tasksPerMonthCtx = document.getElementById('tasksPerMonthChart').getContext('2d');
-    const tasksPerMonthChart = new Chart(tasksPerMonthCtx, {
-        type: 'line',
-        data: {
-            labels: {{ tasks_per_month_labels | tojson }},
-            datasets: [{
-                label: 'Tarefas criadas',
-                data: {{ tasks_per_month_data | tojson }},
-                fill: true,
-                borderColor: getThemeColors().bg[0],
-                backgroundColor: getThemeColors().bg[0] + '33',
-                pointBackgroundColor: getThemeColors().bg[0]
-            }]
-        },
-        options: {
-            plugins: { legend: { labels: { color: getThemeColors().font } } },
-            scales: {
-                x: { ticks: { color: getThemeColors().font }, grid: { color: getThemeColors().grid } },
-                y: { beginAtZero: true, ticks: { color: getThemeColors().font }, grid: { color: getThemeColors().grid } }
-            }
-        }
-    });
-
-    // Gráfico de progresso dos checklists
-    const subtasksProgressCtx = document.getElementById('subtasksProgressChart').getContext('2d');
-    const subtasksProgressChart = new Chart(subtasksProgressCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Concluídas', 'Pendentes'],
-            datasets: [{
-                data: [{{ completed_subtasks|default(0) }}, {{ pending_subtasks|default(0) }}],
-                backgroundColor: [getThemeColors().bg[0], getThemeColors().bg[1]],
-                borderWidth: 2
-            }]
-        },
-        options: {
-            plugins: { legend: { position: 'bottom', labels: { color: getThemeColors().font } } }
-        }
-    });
 
     // Atualiza as cores dos gráficos ao alternar tema
-    document.getElementById('toggle-theme').addEventListener('click', function() {
-        setTimeout(() => {
-            // Progresso geral
-            progressChart.data.datasets[0].backgroundColor = [getThemeColors().bg[0], getThemeColors().bg[1]];
-            progressChart.options.plugins.legend.labels.color = getThemeColors().font;
-            progressChart.update();
-
-            // Prioridade
-            priorityChart.data.datasets[0].backgroundColor = [
-                getThemeColors().bg[0], getThemeColors().bg[1], getThemeColors().bg[2]
-            ];
-            priorityChart.data.datasets[0].borderColor = [
-                getThemeColors().bg[0], getThemeColors().bg[1], getThemeColors().bg[2]
-            ];
-            priorityChart.options.plugins.legend.labels.color = getThemeColors().font;
-            priorityChart.options.plugins.title.color = getThemeColors().font;
-            priorityChart.options.scales.x.ticks.color = getThemeColors().font;
-            priorityChart.options.scales.y.ticks.color = getThemeColors().font;
-            priorityChart.options.scales.x.grid.color = getThemeColors().grid;
-            priorityChart.options.scales.y.grid.color = getThemeColors().grid;
-            priorityChart.update();
-
-            // Categoria
-            categoryChart.options.plugins.legend.labels.color = getThemeColors().font;
-            categoryChart.options.plugins.title.color = getThemeColors().font;
-            categoryChart.update();
-
-            // Tarefas por mês
-            tasksPerMonthChart.data.datasets[0].borderColor = getThemeColors().bg[0];
-            tasksPerMonthChart.data.datasets[0].backgroundColor = getThemeColors().bg[0] + '33';
-            tasksPerMonthChart.options.plugins.legend.labels.color = getThemeColors().font;
-            tasksPerMonthChart.options.scales.x.ticks.color = getThemeColors().font;
-            tasksPerMonthChart.options.scales.x.grid.color = getThemeColors().grid;
-            tasksPerMonthChart.options.scales.y.ticks.color = getThemeColors().font;
-            tasksPerMonthChart.options.scales.y.grid.color = getThemeColors().grid;
-            tasksPerMonthChart.update();
-
-            // Subtarefas progresso
-            subtasksProgressChart.data.datasets[0].backgroundColor = [getThemeColors().bg[0], getThemeColors().bg[1]];
-            subtasksProgressChart.options.plugins.legend.labels.color = getThemeColors().font;
-            subtasksProgressChart.update();
-        }, 200);
-    });
+    const themeToggleButton = document.getElementById('toggle-dark-mode');
+    if (themeToggleButton) {
+        themeToggleButton.addEventListener('click', function() {
+            console.log("Botão de tema clicado. Aguardando para atualizar gráficos...");
+            setTimeout(() => {
+                try {
+                    console.log("Atualizando gráficos após mudança de tema...");
+                    const newThemeColors = getThemeColors();
+                    
+                    if (progressChart) {
+                        progressChart.data.datasets[0].backgroundColor = [newThemeColors.bg[0], newThemeColors.bg[1]];
+                        progressChart.data.datasets[0].borderColor = newThemeColors.chartBorder;
+                        progressChart.update('none');
+                        console.log("Progress chart atualizado.");
+                    }
+                    if (priorityChart) {
+                        priorityChart.data.datasets[0].backgroundColor = [newThemeColors.bg[0], newThemeColors.bg[1], newThemeColors.bg[2]];
+                        priorityChart.data.datasets[0].borderColor = [newThemeColors.bg[0], newThemeColors.bg[1], newThemeColors.bg[2]];
+                        priorityChart.update('none');
+                        console.log("Priority chart atualizado.");
+                    }
+                    if (categoryChart) {
+                        const newCategoryBgColors = generateCategoryColors(categoryChart.data.labels.length, document.body.getAttribute('data-bs-theme') || 'light');
+                        categoryChart.data.datasets[0].backgroundColor = newCategoryBgColors;
+                        categoryChart.data.datasets[0].borderColor = newThemeColors.chartBorder;
+                        categoryChart.update('none');
+                        console.log("Category chart atualizado.");
+                    }
+                    if (tasksPerMonthChart) {
+                        tasksPerMonthChart.data.datasets[0].borderColor = newThemeColors.bg[0];
+                        tasksPerMonthChart.data.datasets[0].backgroundColor = newThemeColors.bg[0] + '4D';
+                        tasksPerMonthChart.data.datasets[0].pointBackgroundColor = newThemeColors.bg[0];
+                        tasksPerMonthChart.update('none');
+                        console.log("TasksPerMonth chart atualizado.");
+                    }
+                    if (subtasksProgressChart) {
+                        subtasksProgressChart.data.datasets[0].backgroundColor = [newThemeColors.bg[0], newThemeColors.bg[1]];
+                        subtasksProgressChart.data.datasets[0].borderColor = newThemeColors.chartBorder;
+                        subtasksProgressChart.update('none');
+                        console.log("SubtasksProgress chart atualizado.");
+                    }
+                } catch (e) {
+                    console.error("Erro ao ATUALIZAR gráficos após mudança de tema:", e);
+                }
+            }, 75); // Aumentei um pouco o timeout para garantir que Chart.defaults do main.js sejam aplicados
+        });
+    } else {
+        console.warn("Botão 'toggle-dark-mode' não encontrado no dashboard para adicionar listener de atualização de gráficos.");
+    }
 });
 </script>
 {% endblock %}

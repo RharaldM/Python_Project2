@@ -4,6 +4,7 @@
 {% block content %}
 <h2 class="mb-4">Adicionar Nova Tarefa</h2>
 <form method="post" action="{{ url_for('add_task') }}">
+    {{ form.csrf_token if form and form.csrf_token }} {# Boa prática adicionar token CSRF se estiver usando WTForms #}
     <div class="mb-3">
         <label for="title" class="form-label">Título da Tarefa:</label>
         <input type="text" class="form-control" id="title" name="title" placeholder="Ex: Comprar mantimentos" required>
@@ -20,19 +21,22 @@
             <input type="text" 
                    class="form-control" 
                    id="category-input" 
-                   placeholder="Digite uma categoria..."
-                   list="existing-categories">
+                   placeholder="Digite ou selecione uma categoria"
+                   list="existing-categories-datalist"> {# Mudei o ID do datalist para evitar conflito com o input #}
             <button class="btn btn-outline-secondary" 
                     type="button" 
                     id="add-category-btn">Adicionar</button>
         </div>
-        <datalist id="existing-categories">
-            {% for category in all_categories %}
+        <datalist id="existing-categories-datalist">
+            {% for category in all_categories %} {# Supondo que all_categories contenha objetos com um atributo 'name' #}
                 <option value="{{ category.name }}">
             {% endfor %}
         </datalist>
-        <div id="selected-categories-list" class="mt-2 d-flex flex-wrap gap-2"></div>
-        <input type="hidden" name="categories" id="hidden-categories-input">
+        <div id="selected-categories-list" class="mt-2 d-flex flex-wrap gap-2">
+            {# As tags de categoria adicionadas aparecerão aqui #}
+        </div>
+        <!-- Input hidden para enviar as categorias selecionadas -->
+        <input type="hidden" name="selected_categories" id="hidden-categories-input">
     </div>
 
     <div class="mb-3">
@@ -52,8 +56,10 @@
     <!-- Checklist/Subtarefas -->
     <div class="mb-3">
         <label class="form-label">Checklist/Subtarefas:</label>
-        <div id="checklist-container"></div>
-        <button type="button" id="add-subtask" class="btn btn-outline-secondary btn-sm mt-2">Adicionar Subtarefa</button>
+        <div id="checklist-container">
+            {# O checklist.js deve popular isso #}
+        </div>
+        <button type="button" id="add-subtask-btn" class="btn btn-outline-secondary btn-sm mt-2">Adicionar Subtarefa</button> {# Mudei id para ser mais específico #}
     </div>
 
     <div class="d-grid gap-2">
@@ -64,7 +70,125 @@
 {% endblock %}
 
 {% block scripts %}
-    {{ super() }}
-    <script src="{{ url_for('static', filename='category_handler.js') }}"></script>
-    <script src="{{ url_for('static', filename='checklist.js') }}"></script>
+    {{ super() }} {# Mantém scripts do base.html, como main.js e Bootstrap JS #}
+    
+    {# Script para manipulação de categorias dinâmicas #}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const categoryInput = document.getElementById('category-input');
+            const addCategoryBtn = document.getElementById('add-category-btn');
+            const selectedCategoriesList = document.getElementById('selected-categories-list');
+            const hiddenCategoriesInput = document.getElementById('hidden-categories-input');
+            
+            let currentSelectedCategories = []; // Array para manter os nomes das categorias
+
+            function updateHiddenInput() {
+                hiddenCategoriesInput.value = JSON.stringify(currentSelectedCategories);
+                 // Ou, se o backend espera uma string separada por vírgulas:
+                 // hiddenCategoriesInput.value = currentSelectedCategories.join(',');
+                console.log("Hidden input atualizado:", hiddenCategoriesInput.value);
+            }
+
+            function renderCategoryTag(categoryName) {
+                if (!categoryName.trim()) return; // Não adiciona se estiver vazio
+
+                // Normaliza o nome da categoria (ex: minúsculas, sem espaços extras)
+                // para evitar duplicatas como "Trabalho" e "trabalho ".
+                const normalizedCategoryName = categoryName.trim(); //.toLowerCase(); // Opcional: normalizar para minúsculas
+
+                if (currentSelectedCategories.includes(normalizedCategoryName)) {
+                    // alert('Categoria "' + normalizedCategoryName + '" já adicionada.');
+                    categoryInput.value = ''; // Limpa o input
+                    categoryInput.focus();
+                    return; // Evita adicionar duplicatas
+                }
+
+                currentSelectedCategories.push(normalizedCategoryName);
+                updateHiddenInput();
+
+                const tag = document.createElement('span');
+                tag.className = 'category-tag'; // Usa a classe do style.css
+                tag.textContent = normalizedCategoryName; // Mostra o nome normalizado
+
+                const closeBtn = document.createElement('button');
+                closeBtn.type = 'button';
+                closeBtn.className = 'btn-close'; // Bootstrap btn-close
+                closeBtn.setAttribute('aria-label', 'Remover categoria ' + normalizedCategoryName);
+                
+                closeBtn.addEventListener('click', function () {
+                    tag.remove();
+                    currentSelectedCategories = currentSelectedCategories.filter(cat => cat !== normalizedCategoryName);
+                    updateHiddenInput();
+                    categoryInput.focus(); // Foca no input após remover
+                });
+
+                tag.appendChild(closeBtn);
+                selectedCategoriesList.appendChild(tag);
+                categoryInput.value = ''; // Limpa o input após adicionar
+                categoryInput.focus();
+            }
+
+            addCategoryBtn.addEventListener('click', function () {
+                renderCategoryTag(categoryInput.value);
+            });
+
+            categoryInput.addEventListener('keypress', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // Previne submissão do formulário se estiver dentro de um
+                    renderCategoryTag(categoryInput.value);
+                }
+            });
+            
+            // Opcional: se você quiser que o datalist também adicione ao clicar na sugestão
+            // Isso é um pouco mais complexo de implementar de forma robusta cross-browser
+            // A maneira mais simples é o usuário selecionar do datalist (preenchendo o input)
+            // e então clicar em "Adicionar" ou pressionar Enter.
+
+            // Se o formulário tiver um token CSRF (ex: Flask-WTF), e você for fazer AJAX
+            // const csrfToken = document.querySelector('input[name="csrf_token"]')?.value;
+        });
+    </script>
+
+    {# Se você tem um checklist.js separado, mantenha-o. Se não, coloque a lógica aqui ou em outro arquivo. #}
+    {# Exemplo de checklist.js simples (se não tiver o arquivo ainda): #}
+    <script id="checklist-js-logic">
+        document.addEventListener('DOMContentLoaded', function () {
+            const addSubtaskBtn = document.getElementById('add-subtask-btn'); // Corrigido o ID do botão
+            const checklistContainer = document.getElementById('checklist-container');
+            let subtaskCounter = 0;
+
+            if (addSubtaskBtn && checklistContainer) {
+                addSubtaskBtn.addEventListener('click', function () {
+                    subtaskCounter++;
+                    const subtaskDiv = document.createElement('div');
+                    subtaskDiv.className = 'input-group mb-2';
+
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'form-control form-control-sm';
+                    input.name = `subtask_description_${subtaskCounter}`;
+                    input.placeholder = `Subtarefa ${subtaskCounter}`;
+                    
+                    // Botão para remover a subtarefa
+                    const removeBtn = document.createElement('button');
+                    removeBtn.type = 'button';
+                    removeBtn.className = 'btn btn-outline-danger btn-sm';
+                    removeBtn.textContent = 'Remover';
+                    removeBtn.onclick = function() {
+                        subtaskDiv.remove();
+                        // Reajustar contadores ou nomes se necessário ao remover do meio
+                    };
+
+                    subtaskDiv.appendChild(input);
+                    subtaskDiv.appendChild(removeBtn);
+                    checklistContainer.appendChild(subtaskDiv);
+                    input.focus();
+                });
+            }
+        });
+    </script>
+    {# Se você realmente usa category_handler.js e checklist.js externos, remova os scripts inline acima
+       e certifique-se que eles fazem o que é esperado. O script de categorias acima é um substituto. #}
+    <!-- <script src="{{ url_for('static', filename='category_handler.js') }}"></script> -->
+    <!-- <script src="{{ url_for('static', filename='checklist.js') }}"></script> -->
 {% endblock %}
