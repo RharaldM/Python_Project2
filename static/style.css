@@ -32,8 +32,8 @@
 
 /* ------- DARK MODE --------- */
 body.dark-mode {
-    background-color: #181818 !important;
-    color: #f1f1f1 !important;
+    background-color: #121212 !important; /* Melhor contraste para fundo */
+    color: #e0e0e0 !important; /* Melhor contraste para textos */
 }
 
 /* Navbar Dark Mode */
@@ -126,4 +126,174 @@ body.dark-mode .category-tag {
 body.dark-mode option {
     background: #23272b;
     color: #fff;
+}
+
+/* Animações para botões */
+button, .btn {
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+button:hover, .btn:hover {
+    background-color: #0077cc !important;
+    transform: scale(1.05);
+}
+
+/* Feedback visual para links */
+a {
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #ff9900;
+    text-decoration: underline;
+}
+
+/* Foco visível para acessibilidade */
+:focus {
+    outline: 2px solid #0077cc;
+    outline-offset: 2px;
+}
+
+/* Melhorias nas mensagens de alerta */
+.alert {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.alert-dismissible {
+    transform: translateY(0);
+}
+
+/* Feedback ao fechar alertas */
+.alert-dismissible.fade.show {
+    transform: translateY(-10%);
+    opacity: 0;
+}
+/* -------- VARIÁVEIS DE CORES -------- */
+:root {
+    --color-text-light: #212529; /* Texto no modo claro */
+    --color-background-light: #ffffff; /* Fundo no modo claro */
+    --color-link-light: #0d6efd; /* Link no modo claro */
+
+    --color-text-dark: #f1f1f1; /* Texto no modo escuro */
+    --color-background-dark: #181818; /* Fundo no modo escuro */
+    --color-link-dark: #4fc3f7; /* Link no modo escuro */
+}
+
+/* -------- ESTILOS GERAIS -------- */
+body {
+    color: var(--color-text-light);
+    background-color: var(--color-background-light);
+}
+
+body.dark-mode {
+    color: var(--color-text-dark);
+    background-color: var(--color-background-dark);
+}
+
+/* Links */
+a {
+    color: var(--color-link-light);
+    transition: color 0.3s ease;
+}
+
+body.dark-mode a {
+    color: var(--color-link-dark);
+}
+
+/* -------- COMPONENTES -------- */
+/* Navbar */
+body.dark-mode .navbar,
+body.dark-mode .navbar-dark.bg-dark,
+body.dark-mode footer.bg-dark {
+    background-color: #23272b !important;
+}
+
+body.dark-mode .navbar-brand,
+body.dark-mode .nav-link,
+body.dark-mode footer {
+    color: var(--color-text-dark);
+}
+
+body.dark-mode .nav-link.active, 
+body.dark-mode .nav-link:focus {
+    color: #ffe082 !important;
+}
+
+/* Alertas */
+.alert {
+    background-color: #f8f9fa; /* Fundo do alerta */
+    color: var(--color-text-light); /* Texto do alerta */
+    border-color: #dee2e6; /* Borda do alerta */
+}
+
+body.dark-mode .alert {
+    background-color: #23272b !important;
+    color: #ffe082 !important;
+    border-color: #444 !important;
+}
+
+body.dark-mode .alert-success { background-color: #204529 !important; }
+body.dark-mode .alert-danger { background-color: #491217 !important; }
+body.dark-mode .alert-warning { background-color: #665800 !important; }
+body.dark-mode .alert-info    { background-color: #095065 !important; }
+
+/* Botões */
+button, .btn {
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+button:hover, .btn:hover {
+    background-color: #0077cc !important;
+    transform: scale(1.05);
+}
+
+body.dark-mode button, body.dark-mode .btn {
+    color: var(--color-text-dark);
+    background-color: #444;
+    border-color: #555;
+}
+
+/* Inputs e Selects */
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+    background-color: #23272b !important;
+    color: var(--color-text-dark) !important;
+    border-color: #444 !important;
+}
+
+/* Badges */
+body.dark-mode .badge.text-bg-danger    { background-color: #ff5252 !important; color: #fff !important; }
+body.dark-mode .badge.text-bg-warning   { background-color: #ffd54f !important; color: #23272b !important; }
+body.dark-mode .badge.text-bg-info      { background-color: #4fc3f7 !important; color: #23272b !important; }
+body.dark-mode .badge.text-bg-secondary { background-color: #757575 !important; color: #fff !important; }
+body.dark-mode .badge.text-bg-success   { background-color: #66bb6a !important; color: #fff !important; }
+
+/* -------- ACESSIBILIDADE -------- */
+/* Contraste de texto */
+body.dark-mode {
+    background-color: #121212 !important;
+    color: #e0e0e0 !important;
+}
+
+/* Foco visível */
+:focus {
+    outline: 2px solid #0077cc;
+    outline-offset: 2px;
+}
+
+/* Links com feedback visual */
+a:hover {
+    color: #ff9900;
+    text-decoration: underline;
+}
+
+/* Melhorias nas mensagens de alerta */
+.alert-dismissible {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    transform: translateY(0);
+}
+
+.alert-dismissible.fade.show {
+    transform: translateY(-10%);
+    opacity: 0;
 }
