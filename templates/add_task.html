@@ -34,7 +34,7 @@
         </datalist>
         <div id="selected-categories-list" class="mt-2 d-flex flex-wrap gap-2">
         </div>
-        <input type="hidden" name="selected_categories" id="hidden-categories-input">
+        <input type="hidden" name="categories" id="hidden-categories-input">
     </div>
 
     <div class="mb-3">
@@ -64,7 +64,6 @@
     </div>
 </form>
 
-<ul id="task-list" class="mt-4"></ul> <!-- Lista para exibir tarefas adicionadas -->
 
 {% endblock %}
 
@@ -73,88 +72,33 @@
     <script src="{{ url_for('static', filename='category_handler.js') }}"></script>
     <script src="{{ url_for('static', filename='checklist.js') }}"></script>
     <script>
-        document.getElementById('task-form').addEventListener('submit', function(event) {
-        const title = document.getElementById('title').value.trim();
-        if (title.length < 3) {
-            event.preventDefault();
-            alert('O título deve ter pelo menos 3 caracteres.');
-            return;
-        }
-        const dueDate = document.getElementById('due_date').value;
-        if (dueDate && new Date(dueDate) < new Date()) {
-            event.preventDefault();
-            alert('A data de vencimento não pode ser no passado.');
-            return;
-            }
-        });
-    </script>
-    <script>
+        // Verifica se o DOM já está carregado
+        if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             const taskForm = document.getElementById('task-form');
-            const taskList = document.getElementById('task-list');
-            const addCategoryBtn = document.getElementById('add-category-btn');
-            const categoryInput = document.getElementById('category-input');
-            const selectedCategoriesList = document.getElementById('selected-categories-list');
-            const hiddenCategoriesInput = document.getElementById('hidden-categories-input');
-
-            // Adicionar categoria
-            addCategoryBtn.addEventListener('click', function() {
-                const categoryName = categoryInput.value.trim();
-                if (categoryName) {
-                    addCategoryToDisplay(categoryName);
-                    categoryInput.value = '';
+            if (taskForm) {
+                taskForm.addEventListener('submit', function(event) {
+                    const title = document.getElementById('title').value.trim();
+                    if (title.length < 3) {
+                        event.preventDefault();
+                        alert('O título deve ter pelo menos 3 caracteres.');
+                        return;
+                    }
+                });
+            }
+        });
+    } else {
+        const taskForm = document.getElementById('task-form');
+        if (taskForm) {
+            taskForm.addEventListener('submit', function(event) {
+                const title = document.getElementById('title').value.trim();
+                if (title.length < 3) {
+                    event.preventDefault();
+                    alert('O título deve ter pelo menos 3 caracteres.');
+                    return;
                 }
             });
-
-            function addCategoryToDisplay(categoryName) {
-                const categoryItem = document.createElement('span');
-                categoryItem.className = 'badge bg-secondary me-2';
-                categoryItem.textContent = categoryName;
-
-                const removeBtn = document.createElement('button');
-                removeBtn.className = 'btn-close btn-close-white btn-sm ms-2';
-                removeBtn.onclick = function() {
-                    selectedCategoriesList.removeChild(categoryItem);
-                    updateHiddenCategories();
-                };
-
-                categoryItem.appendChild(removeBtn);
-                selectedCategoriesList.appendChild(categoryItem);
-                updateHiddenCategories();
-            }
-
-            function updateHiddenCategories() {
-                const categories = Array.from(selectedCategoriesList.children).map(item => item.textContent.trim());
-                hiddenCategoriesInput.value = JSON.stringify(categories);
-            }
-
-            // Adicionar subtarefa
-            document.getElementById('add-subtask-btn').addEventListener('click', function() {
-                const subtaskInput = document.createElement('input');
-                subtaskInput.type = 'text';
-                subtaskInput.className = 'form-control mt-2';
-                subtaskInput.placeholder = 'Digite uma subtarefa';
-                document.getElementById('checklist-container').appendChild(subtaskInput);
-            });
-
-            // Adicionar tarefa à lista sem recarregar
-            taskForm.addEventListener('submit', function(event) {
-                event.preventDefault(); // Impede o envio padrão do formulário
-
-                const title = document.getElementById('title').value;
-                const description = document.getElementById('description').value;
-                const priority = document.getElementById('priority').value;
-                const dueDate = document.getElementById('due_date').value;
-
-                const taskItem = document.createElement('li');
-                taskItem.innerHTML = `<strong>${title}</strong> - ${description} (Prioridade: ${priority}, Vencimento: ${dueDate})`;
-                taskList.appendChild(taskItem);
-
-                // Limpar o formulário
-                taskForm.reset();
-                selectedCategoriesList.innerHTML = ''; // Limpa categorias selecionadas
-                hiddenCategoriesInput.value = ''; // Limpa o campo oculto
-            });
-        });
-    </script>
+        }
+    }
+</script>
 {% endblock %}

@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedCategories = new Set();
 
     function updateHiddenInput() {
-        hiddenCategoriesInput.value = JSON.stringify(Array.from(selectedCategories));
+        hiddenCategoriesInput.value = Array.from(selectedCategories).join(',');
     }
 
     function addCategoryToDisplay(categoryName) {

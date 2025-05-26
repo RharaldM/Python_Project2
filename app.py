@@ -8,6 +8,13 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from flask_mail import Mail, Message
 from functools import wraps
 from sqlalchemy import or_
+from sqlalchemy.orm import joinedload
+import logging
+import sys
+
+def get_tasks_with_categories(user_id):
+    """Retorna as tarefas com as categorias carregadas."""
+    return Task.query.filter_by(user_id=user_id).options(joinedload(Task.categories)).all()
 
 # Imports for export
 from io import BytesIO
@@ -44,12 +51,19 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# Função auxiliar para carregar categorias
+def load_task_categories(tasks):
+    """Carrega as categorias relacionadas às tarefas."""
+    for task in tasks:
+        task.categories = Category.query.filter(Category.id.in_([cat.id for cat in task.categories])).all()
+    return tasks
+
 @app.route('/')
 def index():
     if 'user_id' in session:
         try:
             user_id = session['user_id']
-            tasks = Task.query.filter_by(user_id=user_id).all()
+            tasks = get_tasks_with_categories(user_id)
             total_tasks = len(tasks)
             completed_tasks = sum(1 for task in tasks if task.completed)
             pending_tasks = total_tasks - completed_tasks
@@ -109,101 +123,180 @@ def logout():
     flash('Você foi desconectado.', 'info')
     return redirect(url_for('index'))
 
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('app.log'),
+        logging.StreamHandler(sys.stdout)  # Usar sys.stdout para console
+    ]
+)
+logger = logging.getLogger(__name__)
+
 @app.route('/dashboard', methods=['GET'])
 @login_required
 def dashboard():
-    search = request.args.get('search')
-    filter_priority = request.args.get('priority')
-    filter_category = request.args.get('category')
-    filter_status = request.args.get('status')
-    filter_due_date = request.args.get('due_date')
+    print("\n=== Starting dashboard route ===")
+    try:
+        search = request.args.get('search')
+        filter_priority = request.args.get('priority')
+        filter_category = request.args.get('category')
+        filter_status = request.args.get('status')
+        filter_due_date = request.args.get('due_date')
 
-    user_id = session['user_id']
-    user = User.query.get(user_id)
+        user_id = session.get('user_id')
+        print(f"Dashboard user_id: {user_id}")
+        user = User.query.get(user_id)
+        
+        if not user_id:
+            flash('Sessão inválida. Por favor, faça login novamente.', 'danger')
+            return redirect(url_for('login'))
+        
+        if not user:
+            flash('Usuário não encontrado. Por favor, faça login novamente.', 'danger')
+            return redirect(url_for('login'))
+        
+        print(f"Querying tasks for user {user_id}")
+        tasks = Task.query.filter_by(user_id=user_id)
+        print(f"Found {tasks.count()} tasks in database")
+        # print(f"Task IDs: {[t.id for t in tasks.all()]}") # Isso pode ser caro se houver muitas tarefas, remova se não for necessário
 
-    tasks = Task.query.filter_by(user_id=user_id)
+        if search:
+            print(f"Applying search filter: {search}")
+            tasks = tasks.filter(or_(Task.title.like(f'%{search}%'), Task.description.like(f'%{search}%')))
 
-    if search:
-        tasks = tasks.filter(or_(Task.title.like(f'%{search}%'), Task.description.like(f'%{search}%')))
+        if filter_priority and filter_priority != 'all':
+            try:
+                enum_priority = Priority[filter_priority.upper()]
+                print(f"Applying priority filter: {enum_priority}")
+                tasks = tasks.filter(Task.priority == enum_priority)
+            except KeyError:
+                flash('Prioridade inválida selecionada.', 'warning')
 
-    if filter_priority and filter_priority != 'all':
-        try:
-            enum_priority = Priority[filter_priority.upper()]
-            tasks = tasks.filter(Task.priority == enum_priority)
-        except KeyError:
-            flash('Prioridade inválida selecionada.', 'warning')
+        if filter_category and filter_category != 'all':
+            print(f"Applying category filter: {filter_category}")
+            tasks = tasks.join(Task.categories).filter(Category.name == filter_category)
 
-    if filter_category and filter_category != 'all':
-        tasks = tasks.join(Task.categories).filter(Category.name == filter_category)
+        if filter_status and filter_status != 'all':
+            print(f"Applying status filter: {filter_status}")
+            if filter_status == 'pending':
+                tasks = tasks.filter(Task.completed == False)
+            elif filter_status == 'completed':
+                tasks = tasks.filter(Task.completed == True)
 
-    if filter_status and filter_status != 'all':
-        if filter_status == 'pending':
-            tasks = tasks.filter(Task.completed == False)
-        elif filter_status == 'completed':
-            tasks = tasks.filter(Task.completed == True)
+        if filter_due_date:
+            try:
+                filter_date_obj = datetime.datetime.strptime(filter_due_date, '%Y-%m-%d').date()
+                print(f"Applying due date filter: {filter_due_date}")
+                tasks = tasks.filter(Task.due_date <= filter_date_obj) # Comparar com o objeto date
+            except ValueError:
+                flash('Formato de data inválido.', 'warning')
 
-    if filter_due_date:
-        try:
-            filter_date_obj = datetime.datetime.strptime(filter_due_date, '%Y-%m-%d').date()
-            tasks = tasks.filter(Task.due_date <= filter_due_date)
-        except ValueError:
-            flash('Formato de data inválido.', 'warning')
+        tasks = tasks.all() # Execute a query aqui após todos os filtros
+        print(f"Final task count after filters: {len(tasks)}")
+        for task in tasks:
+            print(f"Task: {task.id} - {task.title} - Priority: {task.priority} - Due: {task.due_date}")
 
-    tasks = tasks.all()
+        total_tasks = len(tasks)
+        completed_tasks = sum(1 for task in tasks if task.completed)
+        pending_tasks = total_tasks - completed_tasks
 
-    total_tasks = len(tasks)
-    completed_tasks = sum(1 for task in tasks if task.completed)
-    pending_tasks = total_tasks - completed_tasks
+        priority_counts = defaultdict(int)
+        for task in tasks:
+            priority_value = task.priority.value if hasattr(task.priority, 'value') else str(task.priority)
+            priority_counts[priority_value] += 1
+        priority_labels = [p.value.capitalize() for p in Priority]
+        priority_data = [priority_counts[p.value] for p in Priority]
 
-    priority_counts = defaultdict(int)
-    for task in tasks:
-        priority_value = task.priority.value if hasattr(task.priority, 'value') else str(task.priority)
-        priority_counts[priority_value] += 1
-    priority_labels = [p.value.capitalize() for p in Priority]
-    priority_data = [priority_counts[p.value] for p in Priority]
+        pending_priority_counts = defaultdict(int)
+        for task in tasks:
+            if not task.completed:
+                priority_value = task.priority.value if hasattr(task.priority, 'value') else str(task.priority)
+                pending_priority_counts[priority_value] += 1
+        pending_priority_labels = [p.value.capitalize() for p in Priority]
+        pending_priority_data = [pending_priority_counts[p.value] for p in Priority]
 
-    category_counts = defaultdict(int)
-    for task in tasks:
-        for category in task.categories:
-            category_counts[category.name] += 1
-    category_data = sorted(category_counts.items(), key=lambda item: item[0])
+        category_counts = defaultdict(int)
+        for task in tasks:
+            for category in task.categories:
+                # Remove aspas e espaços extras
+                clean_name = category.name.strip().replace('"', '')
+                category_counts[clean_name] += 1
+        category_data = sorted(category_counts.items(), key=lambda item: item[0])
+        
+        # Debug prints
+        print("\n=== Category Data Debug ===")
+        print("Raw category counts:", category_counts)
+        print("Category data:", category_data)
+        print("All category names:", [cat.name for task in tasks for cat in task.categories])
+        # A linha abaixo causou o erro. Removendo porque é apenas um print de depuração e não deveria ser código de execução normal.
+        # print(f"Cleaned category names: {[clean_name for task in tasks for cat in task.categories for clean_name in [cat.name.strip().replace('\"', '')]]}")
 
-    tasks_by_month = Counter()
-    for t in tasks:
-        if t.created_at:
-            key = t.created_at.strftime('%Y-%m')
-            tasks_by_month[key] += 1
-    months_sorted = sorted(tasks_by_month.keys())
-    tasks_per_month_labels = months_sorted
-    tasks_per_month_data = [tasks_by_month[m] for m in months_sorted]
+        # Prepare tasks data with clean categories
+        tasks_data = [
+            {
+                'id': task.id,
+                'title': task.title,
+                'description': task.description,
+                'priority': task.priority,
+                'categories': [{'name': cat.name.strip()} for cat in task.categories],  # Ensure no quotes
+                'due_date': task.due_date,
+                'completed': task.completed,
+                'subtasks': task.subtasks
+            } for task in tasks
+        ]
+        
+        tasks_by_month = Counter()
+        for t in tasks:
+            if t.created_at:
+                key = t.created_at.strftime('%Y-%m')
+                tasks_by_month[key] += 1
+        months_sorted = sorted(tasks_by_month.keys())
+        tasks_per_month_labels = months_sorted
+        tasks_per_month_data = [tasks_by_month[m] for m in months_sorted]
 
-    total_subtasks = sum(len(t.subtasks) for t in tasks)
-    completed_subtasks = sum([sum(1 for s in t.subtasks if s.completed) for t in tasks])
-    pending_subtasks = total_subtasks - completed_subtasks
+        total_subtasks = sum(len(t.subtasks) for t in tasks)
+        completed_subtasks = sum([sum(1 for s in t.subtasks if s.completed) for t in tasks])
+        pending_subtasks = total_subtasks - completed_subtasks
 
-    all_categories = Category.query.all()
-    now = datetime.datetime.now()
+        all_categories = Category.query.all()
+        now = datetime.datetime.now()
+        overdue_tasks = sum(1 for task in tasks if task.due_date and task.due_date.date() < now.date() and not task.completed) # Compare apenas a data, não a hora
 
-    return render_template('dashboard.html',
-                           user=user,
-                           total_tasks=total_tasks,
-                           completed_tasks=completed_tasks,
-                           pending_tasks=pending_tasks,
-                           tasks=tasks,
-                           all_categories=all_categories,
-                           filter_priority=filter_priority,
-                           filter_category=filter_category,
-                           filter_status=filter_status,
-                           filter_due_date=filter_due_date,
-                           priority_labels=priority_labels,
-                           priority_data=priority_data,
-                           category_data=category_data,
-                           now=now,
-                           tasks_per_month_labels=tasks_per_month_labels,
-                           tasks_per_month_data=tasks_per_month_data,
-                           completed_subtasks=completed_subtasks,
-                           pending_subtasks=pending_subtasks)
+        print("=== Dashboard data summary ===")
+        print(f"Total tasks: {total_tasks}")
+        print(f"Completed tasks: {completed_tasks}")
+        print(f"Pending tasks: {pending_tasks}")
+        print(f"Overdue tasks: {overdue_tasks}")
+        print(f"All categories: {[cat.name for cat in all_categories]}")
+        
+        return render_template('dashboard.html',
+                               user=user,
+                               total_tasks=total_tasks,
+                               completed_tasks=completed_tasks,
+                               pending_tasks=pending_tasks,
+                               overdue_tasks=overdue_tasks,
+                               tasks=tasks_data,  # Use the cleaned tasks data
+                               all_categories=all_categories,
+                               filter_priority=filter_priority,
+                               filter_category=filter_category,
+                               filter_status=filter_status,
+                               filter_due_date=filter_due_date,
+                               priority_labels=priority_labels,
+                               priority_data=priority_data,
+                               category_data=category_data,
+                               now=now,
+                               tasks_per_month_labels=tasks_per_month_labels,
+                               tasks_per_month_data=tasks_per_month_data,
+                               completed_subtasks=completed_subtasks,
+                               pending_priority_labels=pending_priority_labels,
+                               pending_priority_data=pending_priority_data,
+                               pending_subtasks=pending_subtasks)
 
+    except Exception as e:
+        print(f"Error in dashboard: {str(e)}")
+        flash(f'Erro ao carregar o dashboard: {str(e)}', 'danger') # Adicionado o erro para o flash
+        return redirect(url_for('index'))
 @app.route('/add_task', methods=['GET', 'POST'])
 @login_required
 def add_task():
@@ -366,19 +459,19 @@ def toggle_subtask(subtask_id):
     sub = SubTask.query.get_or_404(subtask_id)
     task = Task.query.get(sub.task_id)
     if task.user_id != session['user_id']:
-        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'error': 'Você não tem permissão para modificar esta subtarefa.'}), 403
         flash('Você não tem permissão para modificar esta subtarefa.', 'danger')
         return redirect(url_for('dashboard'))
     sub.completed = not sub.completed
     try:
         db.session.commit()
-        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'success': 'Checklist atualizado!'}), 200
         flash('Checklist atualizado!', 'success')
     except Exception as e:
         db.session.rollback()
-        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'error': f'Erro ao atualizar subtarefa: {e}'}), 500
         flash(f'Erro ao atualizar subtarefa: {e}', 'danger')
     return redirect(url_for('dashboard'))
@@ -388,19 +481,19 @@ def toggle_subtask(subtask_id):
 def delete_task(task_id):
     task = Task.query.get_or_404(task_id)
     if task.user_id != session['user_id']:
-        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'error': 'Você não tem permissão para excluir esta tarefa.'}), 403
         flash('Você não tem permissão para excluir esta tarefa.', 'danger')
         return redirect(url_for('dashboard'))
     try:
         db.session.delete(task)
         db.session.commit()
-        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'success': 'Tarefa excluída com sucesso!'}), 200
         flash('Tarefa excluída com sucesso!', 'success')
     except Exception as e:
         db.session.rollback()
-        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'error': f'Erro ao excluir tarefa: {e}'}), 500
         flash(f'Erro ao excluir tarefa: {e}', 'danger')
     return redirect(url_for('dashboard'))
@@ -410,19 +503,19 @@ def delete_task(task_id):
 def complete_task(task_id):
     task = Task.query.get_or_404(task_id)
     if task.user_id != session['user_id']:
-        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'error': 'Você não tem permissão para modificar esta tarefa.'}), 403
         flash('Você não tem permissão para modificar esta tarefa.', 'danger')
         return redirect(url_for('dashboard'))
     task.completed = not task.completed
     try:
         db.session.commit()
-        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'success': 'Status da tarefa atualizado!'}), 200
         flash('Status da tarefa atualizado!', 'success')
     except Exception as e:
         db.session.rollback()
-        if request.is_xhr or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'error': f'Erro ao atualizar status: {e}'}), 500
         flash(f'Erro ao atualizar status: {e}', 'danger')
     return redirect(url_for('dashboard'))

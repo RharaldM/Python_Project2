@@ -359,19 +359,43 @@ document.addEventListener('DOMContentLoaded', function() {
                 progressChart = new Chart(progressCtx, {
                     type: 'pie',
                     data: {
-                        labels: ['Concluídas', 'Pendentes'],
+                        labels: ['Concluídas', 'Pendentes', 'Atrasadas'],
                         datasets: [{
-                            data: [{{ completed_tasks | default(0) }}, {{ pending_tasks | default(0) }}],
-                            backgroundColor: [initialThemeColors.bg[0], initialThemeColors.bg[1]],
+                            data: [
+                                {{ completed_tasks | default(0) }},
+                                {{ pending_tasks | default(0) }},
+                                {{ overdue_tasks | default(0) }}
+                            ],
+                            backgroundColor: [
+                                initialThemeColors.bg[0], // Verde para Concluídas
+                                initialThemeColors.bg[1], // Amarelo para Pendentes
+                                initialThemeColors.bg[4]  // Vermelho para Atrasadas
+                            ],
                             borderColor: initialThemeColors.chartBorder,
                             borderWidth: 2
                         }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Progresso Geral'
+                            }
+                        }
+                    }
                 });
                 console.log("Progress chart inicializado.");
-            } catch (e) { console.error("Erro ao inicializar progressChart:", e); }
-        } else { console.log("Elemento progressChart não encontrado."); }
+            } catch (e) {
+                console.error("Erro ao inicializar progressChart:", e);
+            }
+        } else {
+            console.log("Elemento progressChart não encontrado.");
+        }
 
         if (document.getElementById('priorityChart')) {
             try {
@@ -388,11 +412,35 @@ document.addEventListener('DOMContentLoaded', function() {
                             borderWidth: 1
                         }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: 'Tarefas por Prioridade' } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Tarefas por Prioridade'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    precision: 0
+                                }
+                            }
+                        }
+                    }
                 });
                 console.log("Priority chart inicializado.");
-            } catch (e) { console.error("Erro ao inicializar priorityChart:", e); }
-        } else { console.log("Elemento priorityChart não encontrado."); }
+            } catch (e) {
+                console.error("Erro ao inicializar priorityChart:", e);
+            }
+        } else {
+            console.log("Elemento priorityChart não encontrado.");
+        }
         
         if (document.getElementById('categoryChart')) {
             try {
@@ -425,11 +473,27 @@ document.addEventListener('DOMContentLoaded', function() {
                             hoverOffset: 4
                         }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Tarefas por Categoria' } } }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Tarefas por Categoria'
+                            }
+                        }
+                    }
                 });
                 console.log("Category chart inicializado.");
-            } catch (e) { console.error("Erro ao inicializar categoryChart:", e); }
-        } else { console.log("Elemento categoryChart não encontrado."); }
+            } catch (e) {
+                console.error("Erro ao inicializar categoryChart:", e);
+            }
+        } else {
+            console.log("Elemento categoryChart não encontrado.");
+        }
 
         if (document.getElementById('tasksPerMonthChart')) {
             try {
@@ -448,11 +512,23 @@ document.addEventListener('DOMContentLoaded', function() {
                             tension: 0.1
                         }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
                 });
                 console.log("TasksPerMonth chart inicializado.");
-            } catch (e) { console.error("Erro ao inicializar tasksPerMonthChart:", e); }
-        } else { console.log("Elemento tasksPerMonthChart não encontrado."); }
+            } catch (e) {
+                console.error("Erro ao inicializar tasksPerMonthChart:", e);
+            }
+        } else {
+            console.log("Elemento tasksPerMonthChart não encontrado.");
+        }
 
         if (document.getElementById('subtasksProgressChart')) {
             try {
@@ -468,11 +544,23 @@ document.addEventListener('DOMContentLoaded', function() {
                             borderWidth: 2
                         }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
                 });
                 console.log("SubtasksProgress chart inicializado.");
-            } catch (e) { console.error("Erro ao inicializar subtasksProgressChart:", e); }
-        } else { console.log("Elemento subtasksProgressChart não encontrado."); }
+            } catch (e) {
+                console.error("Erro ao inicializar subtasksProgressChart:", e);
+            }
+        } else {
+            console.log("Elemento subtasksProgressChart não encontrado.");
+        }
 
     } catch (err) {
         console.error("Erro GERAL durante a inicialização dos gráficos:", err);

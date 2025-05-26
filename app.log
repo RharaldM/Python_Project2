@@ -1,0 +1,334 @@
+2025-05-25 21:13:00,887 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-05-25 21:13:00,887 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-25 21:13:00,889 - werkzeug - INFO -  * Restarting with stat
+2025-05-25 21:13:01,806 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 21:13:01,808 - werkzeug - INFO -  * Debugger PIN: 622-731-195
+2025-05-25 21:13:05,722 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:13:05] "GET / HTTP/1.1" 200 -
+2025-05-25 21:13:05,795 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:13:05] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 21:13:05,795 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:13:05] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 21:13:09,021 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:13:09] "GET / HTTP/1.1" 200 -
+2025-05-25 21:13:09,038 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:13:09] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 21:13:09,042 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:13:09] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 21:13:09,696 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:13:09] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 21:13:09,719 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:13:09] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 21:13:09,719 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:13:09] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 21:13:13,777 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:13:13] "[32mPOST /toggle_subtask/12 HTTP/1.1[0m" 302 -
+2025-05-25 21:13:13,795 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:13:13] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 21:13:13,819 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:13:13] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 21:13:13,820 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:13:13] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 21:14:51,169 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:14:51] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 21:14:51,191 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:14:51] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 21:14:51,196 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:14:51] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 21:14:58,169 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:14:58] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 21:14:58,186 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:14:58] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 21:14:58,189 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:14:58] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 21:19:11,924 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:19:11] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 21:19:11,944 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:19:11] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 21:19:11,949 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:19:11] "GET /static/dashboard_charts.js HTTP/1.1" 200 -
+2025-05-25 21:19:11,950 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:19:11] "GET /static/main.js HTTP/1.1" 200 -
+2025-05-25 21:19:50,147 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:19:50] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 21:19:50,167 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:19:50] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 21:19:50,170 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:19:50] "GET /static/main.js HTTP/1.1" 200 -
+2025-05-25 21:25:13,404 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:25:13] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 21:25:13,424 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:25:13] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 21:25:13,424 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:25:13] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 21:25:21,376 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:25:21] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 21:25:21,393 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:25:21] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 21:25:21,394 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 21:25:21] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 22:00:08,730 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:00:08] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 22:00:08,752 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:00:08] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:00:08,755 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:00:08] "GET /static/main.js HTTP/1.1" 200 -
+2025-05-25 22:00:56,546 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:00:56] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 22:00:56,567 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:00:56] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:00:56,571 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:00:56] "GET /static/main.js HTTP/1.1" 200 -
+2025-05-25 22:01:36,534 - werkzeug - INFO -  * Detected change in 'C:\\Users\\hard\\Documents\\Python_Project2\\Python_Project2\\app.py', reloading
+2025-05-25 22:01:36,743 - werkzeug - INFO -  * Restarting with stat
+2025-05-25 22:01:37,698 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 22:01:37,700 - werkzeug - INFO -  * Debugger PIN: 622-731-195
+2025-05-25 22:05:16,427 - werkzeug - INFO -  * Detected change in 'C:\\Users\\hard\\Documents\\Python_Project2\\Python_Project2\\app.py', reloading
+2025-05-25 22:05:16,593 - werkzeug - INFO -  * Restarting with stat
+2025-05-25 22:05:17,631 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 22:05:17,633 - werkzeug - INFO -  * Debugger PIN: 622-731-195
+2025-05-25 22:14:35,296 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:14:35] "[32mGET /dashboard HTTP/1.1[0m" 302 -
+2025-05-25 22:14:35,344 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:14:35] "GET / HTTP/1.1" 200 -
+2025-05-25 22:14:35,413 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:14:35] "GET /static/main.js HTTP/1.1" 200 -
+2025-05-25 22:14:35,413 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:14:35] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:14:51,181 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:14:51] "[32mGET /dashboard HTTP/1.1[0m" 302 -
+2025-05-25 22:14:51,188 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:14:51] "GET / HTTP/1.1" 200 -
+2025-05-25 22:14:51,215 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:14:51] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:14:51,216 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:14:51] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 22:15:54,318 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:15:54] "[32mGET /dashboard HTTP/1.1[0m" 302 -
+2025-05-25 22:15:54,325 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:15:54] "GET / HTTP/1.1" 200 -
+2025-05-25 22:15:54,343 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:15:54] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:15:54,350 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:15:54] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 22:16:23,971 - werkzeug - INFO -  * Detected change in 'C:\\Users\\hard\\Documents\\Python_Project2\\Python_Project2\\app.py', reloading
+2025-05-25 22:16:24,192 - werkzeug - INFO -  * Restarting with stat
+2025-05-25 22:16:25,420 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 22:16:25,423 - werkzeug - INFO -  * Debugger PIN: 622-731-195
+2025-05-25 22:16:32,465 - werkzeug - INFO -  * Detected change in 'C:\\Users\\hard\\Documents\\Python_Project2\\Python_Project2\\app.py', reloading
+2025-05-25 22:16:32,753 - werkzeug - INFO -  * Restarting with stat
+2025-05-25 22:16:34,009 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 22:16:34,013 - werkzeug - INFO -  * Debugger PIN: 622-731-195
+2025-05-25 22:16:58,492 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:16:58] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 22:16:58,540 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:16:58] "[33mGET /static/js/main.js HTTP/1.1[0m" 404 -
+2025-05-25 22:16:58,579 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:16:58] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:16:58,581 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:16:58] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 22:17:56,178 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:17:56] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 22:17:56,203 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:17:56] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:17:56,210 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:17:56] "[33mGET /static/js/main.js HTTP/1.1[0m" 404 -
+2025-05-25 22:17:56,210 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:17:56] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 22:18:17,285 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:18:17] "[32mPOST /toggle_subtask/12 HTTP/1.1[0m" 302 -
+2025-05-25 22:18:17,304 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:18:17] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 22:18:17,331 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:18:17] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:18:17,332 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:18:17] "[33mGET /static/js/main.js HTTP/1.1[0m" 404 -
+2025-05-25 22:18:17,332 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:18:17] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 22:18:44,628 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:18:44] "GET /add_task HTTP/1.1" 200 -
+2025-05-25 22:18:44,651 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:18:44] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:18:44,654 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:18:44] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 22:18:44,657 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:18:44] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-25 22:18:44,657 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:18:44] "[36mGET /static/checklist.js HTTP/1.1[0m" 304 -
+2025-05-25 22:18:48,320 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:18:48] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 22:18:48,359 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:18:48] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:18:48,365 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:18:48] "[33mGET /static/js/main.js HTTP/1.1[0m" 404 -
+2025-05-25 22:18:48,366 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:18:48] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 22:19:37,504 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:19:37] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 22:19:37,523 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:19:37] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:19:37,528 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:19:37] "[33mGET /static/js/main.js HTTP/1.1[0m" 404 -
+2025-05-25 22:19:37,528 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:19:37] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 22:21:04,111 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:21:04] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 22:21:04,136 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:21:04] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:21:04,138 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:21:04] "GET /static/main.js HTTP/1.1" 200 -
+2025-05-25 22:21:04,142 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:21:04] "[33mGET /static/js/main.js HTTP/1.1[0m" 404 -
+2025-05-25 22:21:25,749 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:21:25] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 22:21:25,766 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:21:25] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:21:25,770 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:21:25] "[33mGET /static/js/main.js HTTP/1.1[0m" 404 -
+2025-05-25 22:21:25,770 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:21:25] "GET /static/main.js HTTP/1.1" 200 -
+2025-05-25 22:23:06,001 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:23:06] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 22:23:06,021 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:23:06] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:23:06,026 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:23:06] "[33mGET /static/js/main.js HTTP/1.1[0m" 404 -
+2025-05-25 22:23:06,027 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:23:06] "GET /static/main.js HTTP/1.1" 200 -
+2025-05-25 22:23:31,533 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:23:31] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 22:23:31,551 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:23:31] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:23:31,556 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:23:31] "[33mGET /static/js/main.js HTTP/1.1[0m" 404 -
+2025-05-25 22:23:31,556 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:23:31] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 22:24:27,143 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:24:27] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 22:24:27,165 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:24:27] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:24:27,170 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:24:27] "[33mGET /static/js/main.js HTTP/1.1[0m" 404 -
+2025-05-25 22:24:27,170 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:24:27] "GET /static/main.js HTTP/1.1" 200 -
+2025-05-25 22:25:17,994 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:25:17] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 22:25:18,013 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:25:18] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:25:18,015 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:25:18] "[33mGET /static/js/main.js HTTP/1.1[0m" 404 -
+2025-05-25 22:25:18,015 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:25:18] "GET /static/main.js HTTP/1.1" 200 -
+2025-05-25 22:25:25,777 - werkzeug - INFO -  * Detected change in 'C:\\Users\\hard\\Documents\\Python_Project2\\Python_Project2\\app.py', reloading
+2025-05-25 22:25:25,970 - werkzeug - INFO -  * Restarting with stat
+2025-05-25 22:25:27,039 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 22:25:27,041 - werkzeug - INFO -  * Debugger PIN: 622-731-195
+2025-05-25 22:25:28,044 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:25:28] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 22:25:28,106 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:25:28] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:25:28,109 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:25:28] "GET /static/main.js HTTP/1.1" 200 -
+2025-05-25 22:35:13,909 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:35:13] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 22:35:13,933 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:35:13] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:35:13,933 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:35:13] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 22:35:37,825 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:35:37] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 22:35:37,847 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:35:37] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:35:37,847 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:35:37] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 22:38:33,450 - werkzeug - INFO -  * Detected change in 'C:\\Users\\hard\\Documents\\Python_Project2\\Python_Project2\\app.py', reloading
+2025-05-25 22:38:33,596 - werkzeug - INFO -  * Restarting with stat
+2025-05-25 22:38:34,541 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 22:38:34,545 - werkzeug - INFO -  * Debugger PIN: 622-731-195
+2025-05-25 22:38:35,560 - werkzeug - INFO -  * Detected change in 'C:\\Users\\hard\\Documents\\Python_Project2\\Python_Project2\\app.py', reloading
+2025-05-25 22:38:35,747 - werkzeug - INFO -  * Restarting with stat
+2025-05-25 22:38:36,657 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 22:38:36,660 - werkzeug - INFO -  * Debugger PIN: 622-731-195
+2025-05-25 22:41:16,196 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-05-25 22:41:16,196 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-25 22:41:16,197 - werkzeug - INFO -  * Restarting with stat
+2025-05-25 22:41:17,179 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 22:41:17,182 - werkzeug - INFO -  * Debugger PIN: 622-731-195
+2025-05-25 22:41:17,261 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:41:17] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 22:41:17,277 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:41:17] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 22:41:17,336 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:41:17] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:41:17,336 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:41:17] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 22:41:25,280 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:41:25] "GET / HTTP/1.1" 200 -
+2025-05-25 22:41:25,305 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:41:25] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:41:25,306 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:41:25] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 22:41:28,233 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:41:28] "GET /dashboard HTTP/1.1" 200 -
+2025-05-25 22:41:28,261 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:41:28] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:41:28,262 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:41:28] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 22:49:30,907 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:49:30] "GET /add_task HTTP/1.1" 200 -
+2025-05-25 22:49:30,934 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:49:30] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:49:30,939 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:49:30] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 22:49:30,939 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:49:30] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-25 22:49:30,939 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:49:30] "[36mGET /static/checklist.js HTTP/1.1[0m" 304 -
+2025-05-25 22:57:01,693 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:57:01] "GET /add_task HTTP/1.1" 200 -
+2025-05-25 22:57:01,714 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:57:01] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:57:01,717 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:57:01] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 22:57:01,721 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:57:01] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-25 22:57:01,723 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:57:01] "[36mGET /static/checklist.js HTTP/1.1[0m" 304 -
+2025-05-25 22:57:09,393 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:57:09] "GET /add_task HTTP/1.1" 200 -
+2025-05-25 22:57:09,416 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:57:09] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:57:09,419 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:57:09] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 22:57:09,421 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:57:09] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-25 22:57:09,422 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:57:09] "[36mGET /static/checklist.js HTTP/1.1[0m" 304 -
+2025-05-25 22:59:57,931 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:59:57] "GET /add_task HTTP/1.1" 200 -
+2025-05-25 22:59:57,954 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:59:57] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 22:59:57,961 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:59:57] "[36mGET /static/checklist.js HTTP/1.1[0m" 304 -
+2025-05-25 22:59:57,961 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:59:57] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 22:59:57,961 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 22:59:57] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-25 23:00:46,407 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:00:46] "GET /add_task HTTP/1.1" 200 -
+2025-05-25 23:00:46,430 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:00:46] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 23:00:46,433 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:00:46] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 23:00:46,434 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:00:46] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-25 23:00:46,436 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:00:46] "GET /static/checklist.js HTTP/1.1" 200 -
+2025-05-25 23:02:32,477 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:02:32] "GET /add_task HTTP/1.1" 200 -
+2025-05-25 23:02:32,501 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:02:32] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 23:02:32,505 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:02:32] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 23:02:32,505 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:02:32] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-25 23:02:32,508 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:02:32] "GET /static/checklist.js HTTP/1.1" 200 -
+2025-05-25 23:02:50,779 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-05-25 23:02:50,780 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-25 23:02:50,781 - werkzeug - INFO -  * Restarting with stat
+2025-05-25 23:02:51,889 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 23:02:51,892 - werkzeug - INFO -  * Debugger PIN: 622-731-195
+2025-05-25 23:02:51,926 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:02:51] "GET /add_task HTTP/1.1" 200 -
+2025-05-25 23:02:52,033 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:02:52] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 23:02:52,034 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:02:52] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 23:02:52,036 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:02:52] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-25 23:02:52,037 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:02:52] "[36mGET /static/checklist.js HTTP/1.1[0m" 304 -
+2025-05-25 23:05:47,836 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:05:47] "GET /add_task HTTP/1.1" 200 -
+2025-05-25 23:05:47,861 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:05:47] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-25 23:05:47,868 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:05:47] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-25 23:05:47,868 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:05:47] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-25 23:05:47,868 - werkzeug - INFO - 127.0.0.1 - - [25/May/2025 23:05:47] "[36mGET /static/checklist.js HTTP/1.1[0m" 304 -
+2025-05-26 01:00:44,328 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:00:44] "GET /add_task HTTP/1.1" 200 -
+2025-05-26 01:00:44,351 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:00:44] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:00:44,354 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:00:44] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-26 01:00:44,356 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:00:44] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:00:44,356 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:00:44] "GET /static/checklist.js HTTP/1.1" 200 -
+2025-05-26 01:01:00,553 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:01:00] "GET /add_task HTTP/1.1" 200 -
+2025-05-26 01:01:00,573 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:01:00] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:01:00,577 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:01:00] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:01:00,578 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:01:00] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-26 01:01:00,579 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:01:00] "[36mGET /static/checklist.js HTTP/1.1[0m" 304 -
+2025-05-26 01:03:51,066 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:03:51] "GET /add_task HTTP/1.1" 200 -
+2025-05-26 01:03:51,087 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:03:51] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:03:51,094 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:03:51] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-26 01:03:51,094 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:03:51] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:03:51,094 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:03:51] "GET /static/checklist.js HTTP/1.1" 200 -
+2025-05-26 01:03:54,397 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:03:54] "GET /add_task HTTP/1.1" 200 -
+2025-05-26 01:03:54,415 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:03:54] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:03:54,417 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:03:54] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:03:54,419 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:03:54] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-26 01:03:54,421 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:03:54] "[36mGET /static/checklist.js HTTP/1.1[0m" 304 -
+2025-05-26 01:04:03,665 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:04:03] "GET /add_task HTTP/1.1" 200 -
+2025-05-26 01:04:03,681 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:04:03] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:04:03,689 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:04:03] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:04:03,691 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:04:03] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-26 01:04:03,691 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:04:03] "[36mGET /static/checklist.js HTTP/1.1[0m" 304 -
+2025-05-26 01:08:01,833 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:08:01] "GET /add_task HTTP/1.1" 200 -
+2025-05-26 01:08:01,854 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:08:01] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:08:01,860 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:08:01] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:08:01,861 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:08:01] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-26 01:08:01,861 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:08:01] "[36mGET /static/checklist.js HTTP/1.1[0m" 304 -
+2025-05-26 01:08:14,988 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:08:14] "GET /dashboard HTTP/1.1" 200 -
+2025-05-26 01:08:15,015 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:08:15] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:08:15,017 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:08:15] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:08:21,579 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:08:21] "GET /edit_task/13 HTTP/1.1" 200 -
+2025-05-26 01:08:21,604 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:08:21] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:08:21,607 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:08:21] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:08:21,610 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:08:21] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-26 01:08:21,610 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:08:21] "[36mGET /static/checklist.js HTTP/1.1[0m" 304 -
+2025-05-26 01:10:52,459 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:10:52] "GET /edit_task/13 HTTP/1.1" 200 -
+2025-05-26 01:10:52,479 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:10:52] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:10:52,484 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:10:52] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-26 01:10:52,484 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:10:52] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:10:52,486 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:10:52] "GET /static/checklist.js HTTP/1.1" 200 -
+2025-05-26 01:11:03,023 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:03] "[32mPOST /edit_task/13 HTTP/1.1[0m" 302 -
+2025-05-26 01:11:03,041 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:03] "GET /dashboard HTTP/1.1" 200 -
+2025-05-26 01:11:03,073 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:03] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:11:03,074 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:03] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:11:08,068 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:08] "GET /add_task HTTP/1.1" 200 -
+2025-05-26 01:11:08,097 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:08] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:11:08,100 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:08] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:11:08,102 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:08] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-26 01:11:08,102 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:08] "[36mGET /static/checklist.js HTTP/1.1[0m" 304 -
+2025-05-26 01:11:09,438 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:09] "GET /dashboard HTTP/1.1" 200 -
+2025-05-26 01:11:09,465 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:09] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:11:09,466 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:09] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:11:12,839 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:12] "[32mPOST /toggle_subtask/13 HTTP/1.1[0m" 302 -
+2025-05-26 01:11:12,858 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:12] "GET /dashboard HTTP/1.1" 200 -
+2025-05-26 01:11:12,883 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:12] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:11:12,883 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:12] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:11:23,084 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:23] "[32mPOST /delete_task/10 HTTP/1.1[0m" 302 -
+2025-05-26 01:11:23,107 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:23] "GET /dashboard HTTP/1.1" 200 -
+2025-05-26 01:11:23,134 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:23] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:11:23,135 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:11:23] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:12:05,528 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:12:05] "GET /export/excel HTTP/1.1" 200 -
+2025-05-26 01:14:22,858 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:22] "GET /dashboard HTTP/1.1" 200 -
+2025-05-26 01:14:22,879 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:22] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:14:22,880 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:22] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:14:27,485 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:27] "GET /edit_task/13 HTTP/1.1" 200 -
+2025-05-26 01:14:27,514 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:27] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:14:27,515 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:27] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:14:27,517 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:27] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-26 01:14:27,517 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:27] "GET /static/checklist.js HTTP/1.1" 200 -
+2025-05-26 01:14:30,415 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:30] "GET /dashboard HTTP/1.1" 200 -
+2025-05-26 01:14:30,443 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:30] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:14:30,447 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:30] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:14:49,977 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:49] "GET /add_task HTTP/1.1" 200 -
+2025-05-26 01:14:50,006 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:50] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:14:50,009 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:50] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:14:50,012 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:50] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-26 01:14:50,013 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:50] "[36mGET /static/checklist.js HTTP/1.1[0m" 304 -
+2025-05-26 01:14:59,621 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:59] "[32mPOST /add_task HTTP/1.1[0m" 302 -
+2025-05-26 01:14:59,641 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:59] "GET /dashboard HTTP/1.1" 200 -
+2025-05-26 01:14:59,670 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:59] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:14:59,671 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:14:59] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:15:05,032 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:15:05] "[32mPOST /delete_task/14 HTTP/1.1[0m" 302 -
+2025-05-26 01:15:05,052 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:15:05] "GET /dashboard HTTP/1.1" 200 -
+2025-05-26 01:15:05,076 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:15:05] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:15:05,079 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:15:05] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:16:06,411 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:06] "GET /add_task HTTP/1.1" 200 -
+2025-05-26 01:16:06,439 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:06] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:16:06,439 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:06] "GET /static/styles/checklist.css HTTP/1.1" 200 -
+2025-05-26 01:16:06,444 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:06] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:16:06,445 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:06] "[36mGET /static/checklist.js HTTP/1.1[0m" 304 -
+2025-05-26 01:16:06,445 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:06] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-26 01:16:17,258 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:17] "[32mPOST /add_task HTTP/1.1[0m" 302 -
+2025-05-26 01:16:17,283 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:17] "GET /dashboard HTTP/1.1" 200 -
+2025-05-26 01:16:17,316 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:17] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:16:17,317 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:17] "[36mGET /static/styles/checklist.css HTTP/1.1[0m" 304 -
+2025-05-26 01:16:17,318 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:17] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:16:21,009 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:21] "[32mPOST /toggle_subtask/14 HTTP/1.1[0m" 302 -
+2025-05-26 01:16:21,030 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:21] "GET /dashboard HTTP/1.1" 200 -
+2025-05-26 01:16:21,055 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:21] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:16:21,058 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:21] "[36mGET /static/styles/checklist.css HTTP/1.1[0m" 304 -
+2025-05-26 01:16:21,058 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:21] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:16:25,295 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:25] "GET /edit_task/14 HTTP/1.1" 200 -
+2025-05-26 01:16:25,324 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:25] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:16:25,325 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:25] "[36mGET /static/styles/checklist.css HTTP/1.1[0m" 304 -
+2025-05-26 01:16:25,328 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:25] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:16:25,330 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:25] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-26 01:16:25,330 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:25] "[36mGET /static/checklist.js HTTP/1.1[0m" 304 -
+2025-05-26 01:16:32,593 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:32] "GET /dashboard HTTP/1.1" 200 -
+2025-05-26 01:16:32,623 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:32] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:16:32,624 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:32] "[36mGET /static/styles/checklist.css HTTP/1.1[0m" 304 -
+2025-05-26 01:16:32,625 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:32] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:16:37,959 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:37] "GET /dashboard HTTP/1.1" 200 -
+2025-05-26 01:16:37,983 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:37] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:16:37,985 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:37] "[36mGET /static/styles/checklist.css HTTP/1.1[0m" 304 -
+2025-05-26 01:16:37,987 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:37] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:16:39,254 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:39] "GET /edit_task/14 HTTP/1.1" 200 -
+2025-05-26 01:16:39,278 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:39] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:16:39,282 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:39] "[36mGET /static/styles/checklist.css HTTP/1.1[0m" 304 -
+2025-05-26 01:16:39,284 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:39] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
+2025-05-26 01:16:39,286 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:39] "[36mGET /static/category_handler.js HTTP/1.1[0m" 304 -
+2025-05-26 01:16:39,286 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:39] "[36mGET /static/checklist.js HTTP/1.1[0m" 304 -
+2025-05-26 01:16:41,704 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:41] "[32mPOST /edit_task/14 HTTP/1.1[0m" 302 -
+2025-05-26 01:16:41,724 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:41] "GET /dashboard HTTP/1.1" 200 -
+2025-05-26 01:16:41,756 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:41] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-26 01:16:41,758 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:41] "[36mGET /static/styles/checklist.css HTTP/1.1[0m" 304 -
+2025-05-26 01:16:41,762 - werkzeug - INFO - 127.0.0.1 - - [26/May/2025 01:16:41] "[36mGET /static/main.js HTTP/1.1[0m" 304 -
