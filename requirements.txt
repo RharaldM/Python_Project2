@@ -4,6 +4,7 @@ Werkzeug
 itsdangerous
 Flask-Mail==0.9.1
 Flask-Login==0.6.3
+requests==2.31.0
 
 reportlab==4.0.8
 pandas==2.0.3 # ou pandas==2.2.2
