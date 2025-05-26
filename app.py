@@ -1,4 +1,3 @@
-from pythonanywhere_config import *
 from flask import Flask, session, redirect, url_for, make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
