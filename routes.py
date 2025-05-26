@@ -398,17 +398,23 @@ def delete_task(task_id):
         flash('Você não tem permissão para excluir esta tarefa.', 'danger')
         return redirect(url_for('routes.dashboard'))
     try:
+        # Primeiro excluímos todas as subtarefas
+        SubTask.query.filter_by(task_id=task_id).delete()
+        
+        # Depois excluímos a tarefa principal
         db.session.delete(task)
         db.session.commit()
+        
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'success': 'Tarefa excluída com sucesso!'}), 200
         flash('Tarefa excluída com sucesso!', 'success')
+        return redirect(url_for('routes.dashboard'))
     except Exception as e:
         db.session.rollback()
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'error': f'Erro ao excluir tarefa: {e}'}), 500
         flash(f'Erro ao excluir tarefa: {e}', 'danger')
-    return redirect(url_for('routes.dashboard'))
+        return redirect(url_for('routes.dashboard'))
 
 @routes.route('/complete_task/<int:task_id>', methods=['POST'])
 @login_required
