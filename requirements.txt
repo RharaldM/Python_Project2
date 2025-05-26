@@ -3,6 +3,8 @@ Flask-SQLAlchemy
 Werkzeug
 itsdangerous
 Flask-Mail
+flask-login
+
 reportlab
 pandas>=2.0.0 # ou pandas==2.2.2
 openpyxl
