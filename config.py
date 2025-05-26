@@ -18,7 +18,7 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'supersecretkey'
     
     # Configurações do banco de dados
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///:memory:'
+    SQLALCHEMY_DATABASE_URI = 'sqlite://'  # Usando SQLite em memória
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Configurações do e-mail
