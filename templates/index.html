@@ -7,7 +7,7 @@
         <!-- Authenticated User Section -->
         <div class="text-center mb-5">
             <h1 class="display-4">Bem-vindo, {{ session.get('username') }}!</h1>
-            <p class="lead">Aqui está um resumo das suas tarefas. Acesse o <a href="{{ url_for('dashboard') }}">painel completo</a> para mais detalhes.</p>
+            <p class="lead">Aqui está um resumo das suas tarefas. Acesse o <a href="{{ url_for('routes.dashboard') }}">painel completo</a> para mais detalhes.</p>
         </div>
 
         <!-- Quick Stats -->
@@ -102,9 +102,9 @@
                     </tbody>
                 </table>
             </div>
-            <a href="{{ url_for('dashboard') }}" class="btn btn-primary mt-3">Ver Todas as Tarefas</a>
+            <a href="{{ url_for('routes.dashboard') }}" class="btn btn-primary mt-3">Ver Todas as Tarefas</a>
         {% else %}
-            <p class="text-center text-muted">Nenhuma tarefa recente. <a href="{{ url_for('add_task') }}">Adicione uma tarefa</a> para começar!</p>
+            <p class="text-center text-muted">Nenhuma tarefa recente. <a href="{{ url_for('routes.add_task') }}">Adicione uma tarefa</a> para começar!</p>
         {% endif %}
     {% else %}
         <!-- Unauthenticated User Section -->

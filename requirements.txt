@@ -1,0 +1,13 @@
+Flask
+Flask-SQLAlchemy
+Werkzeug
+itsdangerous
+Flask-Mail
+reportlab
+pandas>=2.0.0 # ou pandas==2.2.2
+openpyxl
+xlsxwriter
+SQLAlchemy
+python-dotenv
+gunicorn
+numpy>=1.26.0 # ou numpy==1.26.4

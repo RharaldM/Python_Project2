@@ -3,7 +3,7 @@
 
 {% block content %}
 <h2 class="mb-4">Adicionar Nova Tarefa</h2>
-<form id="task-form" method="post" action="{{ url_for('add_task') }}">
+<form id="task-form" method="post" action="{{ url_for('routes.add_task') }}">
     {{ form.csrf_token if form and form.csrf_token }}
     <div class="mb-3">
         <label for="title" class="form-label">Título da Tarefa:</label>
@@ -40,9 +40,10 @@
     <div class="mb-3">
         <label for="priority" class="form-label">Prioridade:</label>
         <select class="form-select" id="priority" name="priority" required>
-            <option value="low">Baixa</option>
-            <option value="medium" selected>Média</option>
-            <option value="high">Alta</option>
+            <option value="BAIXA">Baixa</option>
+            <option value="MEDIA" selected>Média</option>
+            <option value="ALTA">Alta</option>
+            <option value="URGENTE">Urgente</option>
         </select>
     </div>
 
@@ -60,7 +61,7 @@
 
     <div class="d-grid gap-2">
         <button type="submit" class="btn btn-primary">Adicionar Tarefa</button>
-        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">Cancelar</a>
+        <a href="{{ url_for('routes.dashboard') }}" class="btn btn-outline-secondary">Cancelar</a>
     </div>
 </form>
 
