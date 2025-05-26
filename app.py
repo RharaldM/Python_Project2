@@ -59,6 +59,10 @@ def create_app():
     login_manager.init_app(app)
     mail.init_app(app)
 
+    # Criar as tabelas do banco de dados
+    with app.app_context():
+        db.create_all()
+
     # Registrar blueprints
     app.register_blueprint(routes)
 
