@@ -14,23 +14,16 @@ from flask import send_file
 routes = Blueprint('routes', __name__, url_prefix='/')
 
 # Função auxiliar para registrar todas as rotas
-@routes.before_app_first_request
-def register_routes():
-    routes.add_url_rule('/', view_func=routes.index)
-    routes.add_url_rule('/register', view_func=routes.register, methods=['GET', 'POST'])
-    routes.add_url_rule('/login', view_func=routes.login, methods=['GET', 'POST'])
-    routes.add_url_rule('/logout', view_func=routes.logout)
-    routes.add_url_rule('/dashboard', view_func=routes.dashboard)
-    routes.add_url_rule('/add_task', view_func=routes.add_task, methods=['POST'])
-    routes.add_url_rule('/edit_task/<int:task_id>', view_func=routes.edit_task, methods=['POST'])
-    routes.add_url_rule('/toggle_subtask/<int:subtask_id>', view_func=routes.toggle_subtask, methods=['POST'])
-    routes.add_url_rule('/delete_task/<int:task_id>', view_func=routes.delete_task, methods=['POST'])
-    routes.add_url_rule('/complete_task/<int:task_id>', view_func=routes.complete_task, methods=['POST'])
-    routes.add_url_rule('/change_password', view_func=routes.change_password, methods=['POST'])
-    routes.add_url_rule('/forgot_password', view_func=routes.forgot_password, methods=['GET', 'POST'])
-    routes.add_url_rule('/reset_password/<token>', view_func=routes.reset_password, methods=['GET', 'POST'])
-    routes.add_url_rule('/export_excel', view_func=routes.export_excel)
-    routes.add_url_rule('/export_pdf', view_func=routes.export_pdf)
+# Removida a função register_routes pois não é necessária
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash('Você precisa estar logado para acessar esta página.', 'danger')
+            return redirect(url_for('routes.login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 def login_required(f):
     @wraps(f)
